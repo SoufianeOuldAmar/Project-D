@@ -34,7 +34,7 @@ public partial class Vlucht2024TouchpointDbContext : DbContext
             entity.Property(e => e.UniqueId)
                 .ValueGeneratedNever()
                 .HasColumnName("UniqueID");
-            entity.Property(e => e.ActualLocal).HasPrecision(0);
+            entity.Property(e => e.ActualLocal).HasPrecision(6);
             entity.Property(e => e.AircraftType).HasMaxLength(50);
             entity.Property(e => e.AirlineShortname).HasMaxLength(50);
             entity.Property(e => e.Airport).HasMaxLength(50);
@@ -42,7 +42,7 @@ public partial class Vlucht2024TouchpointDbContext : DbContext
             entity.Property(e => e.FlightId).HasColumnName("FlightID");
             entity.Property(e => e.FlightNumber).HasMaxLength(50);
             entity.Property(e => e.PaxActual).HasMaxLength(50);
-            entity.Property(e => e.ScheduledLocal).HasPrecision(0);
+            entity.Property(e => e.ScheduledLocal).HasPrecision(6);
             entity.Property(e => e.TimetableId).HasColumnName("TimetableID");
             entity.Property(e => e.Touchpoint).HasMaxLength(50);
             entity.Property(e => e.TrafficType).HasMaxLength(50);

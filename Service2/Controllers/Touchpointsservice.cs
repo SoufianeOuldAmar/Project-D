@@ -16,12 +16,13 @@ namespace Service2.Controllers
         }
 
         [HttpGet("AllVluchtenTouchpoints")]
-        public IActionResult GetAllFlightTouchpointsLink()
+        public IActionResult AllFlightTouchpoints()
         {
             try
             {
 
                 var baseUrl = $"http://localhost:5153";
+                var otherUrl = $"http://localhost:5041";
 
 
                 var result = _context.TouchpointInfos
@@ -29,14 +30,46 @@ namespace Service2.Controllers
                     .Select(g => new
                     {
                         flightId = g.Key,
-                        detailUrls = g.Select(f => $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&uniqueId={f.UniqueId}")
-                                        .ToList(),
+                        flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={g.Key}",
+                        touchpoints = g.Select(f => new
+                        {
+                            uniqueId = f.UniqueId,
+                            detailUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&uniqueId={f.UniqueId}"
+                        }).ToList(),
                         count = g.Count()
                     })
                     .OrderBy(x => x.flightId)
-                    //.Take(100) // Limit to 100 groups
+                    .Take(50)
                     .ToList();
 
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving flight data: {ex.Message}");
+            }
+        }
+
+        [HttpGet("AlltouchpointsFlights")]
+        public IActionResult AllTouchpointsFlights()
+        {
+            try
+            {
+
+                var baseUrl = $"http://localhost:5153";
+                var otherUrl = $"http://localhost:5041";
+
+
+                var result = _context.TouchpointInfos
+                    .OrderBy(f => f.UniqueId)
+                    .Select(f => new
+                    {
+                        uniqueId = f.UniqueId,
+                        touchpointUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&uniqueId={f.UniqueId}",
+                        flightId = f.FlightId,
+                        flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={f.FlightId}"
+                    })
+                    .ToList();
                 return Ok(result);
             }
             catch (Exception ex)

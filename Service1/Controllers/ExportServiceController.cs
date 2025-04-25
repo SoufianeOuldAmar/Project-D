@@ -4,7 +4,7 @@ using Project_D.Data;
 
 namespace Project_D.Controllers
 {
-    [Route("ExportService")]
+    [Route("VluchtenService")]
     [ApiController]
     public class ExportServiceController : ControllerBase
     {
@@ -28,7 +28,7 @@ namespace Project_D.Controllers
                 .Select(f => new
                 {
                     flightId = f.FlightId,
-                    detailUrl = $"{baseUrl}/ExportService/entry?flightId={f.FlightId}"//&uniqueId={f.UniqueId}"
+                    detailUrl = $"{baseUrl}/VluchtenService/entry?flightId={f.FlightId}"//&uniqueId={f.UniqueId}"
                 })
                 .ToList();
 
@@ -38,7 +38,7 @@ namespace Project_D.Controllers
             {
                 return StatusCode(500, $"Error retrieving flight entries: {ex.Message}");
             }
-        }
+        }  
 
         [HttpGet("entry")]
         public IActionResult GetFlightEntry([FromQuery] int flightId)//, [FromQuery] int uniqueId)

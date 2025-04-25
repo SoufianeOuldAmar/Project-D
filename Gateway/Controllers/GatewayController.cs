@@ -15,12 +15,12 @@ namespace Gateway.Controllers
             _httpClient = new HttpClient();
         }
 
-        [HttpGet("exports")]
-        public async Task<IActionResult> TestService()
+        [HttpGet("AllFlights")]
+        public async Task<IActionResult> VluchtenService()
         {
             try
             {
-                var url = $"http://localhost:5041/ExportService/AllVluchtenExports";
+                var url = $"http://localhost:5041/VluchtenService/AllVluchtenExports";
 
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -33,8 +33,28 @@ namespace Gateway.Controllers
             }
         }
 
-        [HttpGet("Touchpoints")]
-        public async Task<IActionResult> Service1()
+        [HttpGet("AllTouchpoints")]
+        public async Task<IActionResult> TouchpointService()
+        {
+            try
+            {
+                var url = $"http://localhost:5153/TouchpointsService/AlltouchpointsFlights";
+
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                return Ok(await response.Content.ReadAsStringAsync());
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Error calling get flight report with Flight ID link: " + ex.Message);
+            }
+        }
+
+
+
+        [HttpGet("AllVluchtenTouchpoints")]
+        public async Task<IActionResult> AllVluchtenTouchpointServive()
         {
             try
             {
@@ -51,11 +71,6 @@ namespace Gateway.Controllers
             }
         }
 
-        //[HttpGet("Flight")]
-        //public async Task<IActionResult> Service2(int flightID)
-        //{
-
-        //}
 
     }
 }
