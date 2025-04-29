@@ -33,8 +33,8 @@ namespace Service2.Controllers
                         flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={g.Key}",
                         touchpoints = g.Select(f => new
                         {
-                            uniqueId = f.UniqueId,
-                            detailUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&uniqueId={f.UniqueId}"
+                            idActual = f.IDActual,
+                            detailUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.IDActual}"
                         }).ToList(),
                         count = g.Count()
                     })
@@ -61,11 +61,11 @@ namespace Service2.Controllers
 
 
                 var result = _context.TouchpointInfos
-                    .OrderBy(f => f.UniqueId)
+                    .OrderBy(f => f.IDActual)
                     .Select(f => new
                     {
-                        uniqueId = f.UniqueId,
-                        touchpointUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&uniqueId={f.UniqueId}",
+                        idActual = f.IDActual,
+                        touchpointUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.IDActual}",
                         flightId = f.FlightId,
                         flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={f.FlightId}"
                     })
@@ -79,16 +79,16 @@ namespace Service2.Controllers
         }
 
         [HttpGet("entry")]
-        public IActionResult GetFlightEntry([FromQuery] int flightId, [FromQuery] int UniqueId)
+        public IActionResult GetFlightEntry([FromQuery] int flightId, [FromQuery] int IDActual)
         {
             try
             {
                 var flight = _context.TouchpointInfos
-                                .FirstOrDefault(f => f.FlightId == flightId && f.UniqueId == UniqueId);
+                                .FirstOrDefault(f => f.FlightId == flightId && f.IDActual == IDActual);
 
                 if (flight == null)
                 {
-                    return NotFound($"Flight not found with ID {flightId} and unique ID {UniqueId}");
+                    return NotFound($"Flight not found with ID {flightId} and unique ID {IDActual}");
                 }
 
                 return Ok(flight);

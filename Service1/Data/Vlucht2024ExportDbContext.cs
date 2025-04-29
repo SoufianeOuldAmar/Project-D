@@ -17,9 +17,9 @@ public partial class Vlucht2024ExportDbContext : DbContext
 
     public virtual DbSet<ExportInfo> ExportInfos { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-JLBRQTRK\\SQLEXPRESS;Database=Vlucht2024ExportDb;Integrated Security=True;TrustServerCertificate=True;");
+    //     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+    //         => optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=FlightExportDb;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,13 +27,13 @@ public partial class Vlucht2024ExportDbContext : DbContext
 
         modelBuilder.Entity<ExportInfo>(entity =>
         {
-            entity.HasKey(e => e.UniqueId);
+            entity.HasKey(e => e.IDActual);
 
             entity.ToTable("ExportInfo");
 
-            entity.Property(e => e.UniqueId)
+            entity.Property(e => e.IDActual)
                 .ValueGeneratedNever()
-                .HasColumnName("UniqueID");
+                .HasColumnName("IDActual");
             entity.Property(e => e.ActualLocal).HasPrecision(0);
             entity.Property(e => e.ActualUtc)
                 .HasPrecision(0)
@@ -64,9 +64,9 @@ public partial class Vlucht2024ExportDbContext : DbContext
             entity.Property(e => e.BagsWeight).HasMaxLength(50);
             entity.Property(e => e.Bewegingen).HasMaxLength(50);
             entity.Property(e => e.Bus).HasMaxLength(50);
-            entity.Property(e => e.Column67)
+            entity.Property(e => e.EmptyCol67)
                 .HasMaxLength(1)
-                .HasColumnName("column67");
+                .HasColumnName("EmptyCol67");
             entity.Property(e => e.Country).HasMaxLength(50);
             entity.Property(e => e.CrewCabin).HasMaxLength(50);
             entity.Property(e => e.CrewCockpit).HasMaxLength(50);
@@ -87,7 +87,7 @@ public partial class Vlucht2024ExportDbContext : DbContext
             entity.Property(e => e.FlightId).HasColumnName("FlightID");
             entity.Property(e => e.FlightNumber).HasMaxLength(50);
             entity.Property(e => e.Forecast).HasMaxLength(50);
-            entity.Property(e => e.Forecast1).HasMaxLength(1);
+            entity.Property(e => e.Forecast).HasMaxLength(1);
             entity.Property(e => e.ForecastBabys)
                 .HasMaxLength(50)
                 .HasColumnName("Forecast_babys");

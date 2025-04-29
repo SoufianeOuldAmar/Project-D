@@ -8,11 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<Vlucht2024TouchpointDbContext>(options =>
-{
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    );
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FlightTouchpointDb")));
+
 
 var app = builder.Build();
 

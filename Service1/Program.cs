@@ -10,7 +10,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<Vlucht2024ExportDbContext>(options =>
 {
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
+        builder.Configuration.GetConnectionString("FlightExportDb")
     );
 });
 

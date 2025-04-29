@@ -17,9 +17,9 @@ public partial class Vlucht2024TouchpointDbContext : DbContext
 
     public virtual DbSet<TouchpointInfo> TouchpointInfos { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-JLBRQTRK\\SQLEXPRESS;Database=Vlucht2024TouchpointDb;Integrated Security=True;TrustServerCertificate=True;");
+//     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+// #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//         => optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=FlightTouchpointDb;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,13 +27,13 @@ public partial class Vlucht2024TouchpointDbContext : DbContext
 
         modelBuilder.Entity<TouchpointInfo>(entity =>
         {
-            entity.HasKey(e => e.UniqueId);
+            entity.HasKey(e => e.IDActual);
 
             entity.ToTable("TouchpointInfo");
 
-            entity.Property(e => e.UniqueId)
+            entity.Property(e => e.IDActual)
                 .ValueGeneratedNever()
-                .HasColumnName("UniqueID");
+                .HasColumnName("IDActual");
             entity.Property(e => e.ActualLocal).HasPrecision(6);
             entity.Property(e => e.AircraftType).HasMaxLength(50);
             entity.Property(e => e.AirlineShortname).HasMaxLength(50);

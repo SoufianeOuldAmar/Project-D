@@ -35,5 +35,5 @@ public partial class TouchpointInfo
 
     public string? PaxActual { get; set; }
 
-    public int UniqueId { get; set; }
+    public int IDActual { get; set; }
 }
