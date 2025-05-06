@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
@@ -6,6 +7,7 @@ namespace Gateway.Controllers
 {
     [ApiController]
     [Route("gateway")]
+    [Authorize]  // Apply authorization to the entire controller (requires valid JWT)
     public class GatewayController : ControllerBase
     {
         private readonly HttpClient _httpClient;
@@ -29,7 +31,7 @@ namespace Gateway.Controllers
             }
             catch (HttpRequestException ex)
             {
-                return StatusCode(500, $"Error calling test function:" + ex.Message);
+                return StatusCode(500, $"Error calling test function: " + ex.Message);
             }
         }
 
@@ -51,8 +53,6 @@ namespace Gateway.Controllers
             }
         }
 
-
-
         [HttpGet("AllVluchtenTouchpoints")]
         public async Task<IActionResult> AllVluchtenTouchpointServive()
         {
@@ -70,7 +70,5 @@ namespace Gateway.Controllers
                 return StatusCode(500, $"Error calling get flight report with Flight ID link: " + ex.Message);
             }
         }
-
-
     }
 }
