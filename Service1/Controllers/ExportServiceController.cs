@@ -8,9 +8,9 @@ namespace Project_D.Controllers
     [ApiController]
     public class ExportServiceController : ControllerBase
     {
-        private readonly Vlucht2024ExportDbContext _context;
+        private readonly FlightExportDbContext _context;
 
-        public ExportServiceController(Vlucht2024ExportDbContext context)
+        public ExportServiceController(FlightExportDbContext context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace Project_D.Controllers
             {
                 var baseUrl = $"http://localhost:5041";
 
-                var result = _context.ExportInfos
+                var result = _context.FlightExportInfos
                 .OrderBy(f => f.FlightId)  // Orders by FlightId
                 .Take(100)
                 .Select(f => new
@@ -38,14 +38,14 @@ namespace Project_D.Controllers
             {
                 return StatusCode(500, $"Error retrieving flight entries: {ex.Message}");
             }
-        }  
+        }
 
         [HttpGet("entry")]
         public IActionResult GetFlightEntry([FromQuery] int flightId)//, [FromQuery] int uniqueId)
         {
             try
             {
-                var flight = _context.ExportInfos
+                var flight = _context.FlightExportInfos
                                .FirstOrDefault(f => f.FlightId == flightId); //&& f.UniqueId == uniqueId);
 
                 if (flight == null)

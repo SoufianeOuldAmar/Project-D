@@ -1,50 +1,38 @@
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Gateway.Data;
+using Gateway.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// JWT configuration
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-super-secret-key";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "your-issuer";
-
-// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// Add JWT authentication
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UserDatabase")));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
             ValidateAudience = true,
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
+            ValidateIssuerSigningKey = true
         };
     });
 
-builder.Services.AddAuthorization();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -52,11 +40,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// Use CORS policy
-app.UseCors("AllowReactApp");
-
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

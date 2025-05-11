@@ -1,57 +1,70 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
+using Gateway.Entities;
+using Gateway.Models;
+using Gateway.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Gateway.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/auth")]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService authService) : ControllerBase
     {
-        private readonly IConfiguration _configuration;
 
-        public AuthController(IConfiguration configuration)
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> Register(UserDto request)
         {
-            _configuration = configuration;
+            var user = await authService.RegisterAsync(request);
+            if (user is null)
+            {
+                return BadRequest("Username already exists");
+            }
+
+            return Ok(user);
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel login)
+        public async Task<ActionResult<TokenResponseDto>> Login(UserDto request)
         {
-            if (login.Username == "admin" && login.Password == "password123")
+            var result = await authService.LoginAsync(request);
+            if (result is null)
             {
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.Name, login.Username),
-                    new Claim(ClaimTypes.Role, "Admin")
-                };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Issuer"],
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: creds
-                );
-
-                var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-                return Ok(new { Token = jwtToken });
+                return BadRequest("Invalid username or password");
             }
 
-            return Unauthorized("Invalid credentials");
+            return Ok(result);
         }
-    }
 
-    public class LoginModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+        {
+            var result = await authService.RefreshTokensAsync(request);
+            if (result is null || result.AccessToken is null || result.RefreshToken is null)
+            {
+                return Unauthorized("Invalid refresh token");
+            }
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AuthenticatedOnlyEndpoint()
+        {
+            return Ok("You are authenticated");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnlyEndpoint()
+        {
+            return Ok("You are an Admin");
+        }
     }
 }

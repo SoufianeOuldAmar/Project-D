@@ -8,9 +8,9 @@ namespace Service2.Controllers
     [ApiController]
     public class Touchpointsservice : ControllerBase
     {
-        private readonly Vlucht2024TouchpointDbContext _context;
+        private readonly FlightTouchpointDbContext _context;
 
-        public Touchpointsservice(Vlucht2024TouchpointDbContext context)
+        public Touchpointsservice(FlightTouchpointDbContext context)
         {
             _context = context;
         }
@@ -25,7 +25,7 @@ namespace Service2.Controllers
                 var otherUrl = $"http://localhost:5041";
 
 
-                var result = _context.TouchpointInfos
+                var result = _context.FlightTouchpointInfos
                     .GroupBy(f => f.FlightId)
                     .Select(g => new
                     {
@@ -33,8 +33,8 @@ namespace Service2.Controllers
                         flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={g.Key}",
                         touchpoints = g.Select(f => new
                         {
-                            idActual = f.IDActual,
-                            detailUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.IDActual}"
+                            idActual = f.Idactual,
+                            detailUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.Idactual}"
                         }).ToList(),
                         count = g.Count()
                     })
@@ -60,12 +60,12 @@ namespace Service2.Controllers
                 var otherUrl = $"http://localhost:5041";
 
 
-                var result = _context.TouchpointInfos
-                    .OrderBy(f => f.IDActual)
+                var result = _context.FlightTouchpointInfos
+                    .OrderBy(f => f.Idactual)
                     .Select(f => new
                     {
-                        idActual = f.IDActual,
-                        touchpointUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.IDActual}",
+                        idActual = f.Idactual,
+                        touchpointUrl = $"{baseUrl}/TouchpointsService/entry?flightId={f.FlightId}&idActual={f.Idactual}",
                         flightId = f.FlightId,
                         flightUrl = $"{otherUrl}/VluchtenService/entry?flightId={f.FlightId}"
                     })
@@ -83,8 +83,8 @@ namespace Service2.Controllers
         {
             try
             {
-                var flight = _context.TouchpointInfos
-                                .FirstOrDefault(f => f.FlightId == flightId && f.IDActual == IDActual);
+                var flight = _context.FlightTouchpointInfos
+                                .FirstOrDefault(f => f.FlightId == flightId && f.Idactual == IDActual);
 
                 if (flight == null)
                 {
