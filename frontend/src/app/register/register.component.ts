@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ Add HttpClientModule
+import { Router } from '@angular/router'; // ✅ Import Router
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ Add 
 export class RegisterComponent {
   registerForm;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -31,5 +32,9 @@ export class RegisterComponent {
           console.error('Registration failed:', error);
         }
       );
+  }
+  onLogin() {
+    // Redirect to the login page
+    this.router.navigate(['/login']);
   }
 }

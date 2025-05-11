@@ -1,0 +1,49 @@
+<h1>Welcome to the dashboard</h1>
+<button (click)="getFlights()">Get Flights</button>
+<br>
+<br>
+<button (click)="getTouchPoints()">Get Touchpoints</button>
+<br>
+<br>
+<button (click)="getFlightTouchPoints()">Get Flight Touchpoints</button>
+<br>
+
+<div *ngIf="flights.length > 0;">
+    <h2>Flight Data</h2>
+    <button (click)="clearFlights()">Empty flight list</button>
+    <ul>
+        <li *ngFor="let flight of flights">
+            <p>flightId: {{ flight.flightId }}</p>
+            <p>detailUrl: {{ flight.detailUrl }}</p>
+            <!-- Add more properties if your flight object has them -->
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="touchPoints.length > 0;">
+    <h2>Touchpoint Data</h2>
+    <button (click)="clearTouchPoints()">Empty touchpoint list</button>
+    <ul>
+        <li *ngFor="let touchPoint of touchPoints">
+            <p>idActual: {{ touchPoint.idActual }}</p>
+            <p>touchpointUrl: {{ touchPoint.touchpointUrl }}</p>
+            <p>flightId: {{ touchPoint.flightId }}</p>
+            <p>flightUrl: {{ touchPoint.flightUrl }}</p>
+
+            <!-- Add more properties if your touch point object has them -->
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="flightTouchPoints.length > 0;">
+    <h2>Flight Touchpoint Data</h2>
+    <button (click)="clearFlightTouchPoints()">Empty flight touchpoint list</button>
+    <ul>
+        <li *ngFor="let flightTouchPoint of flightTouchPoints">
+            <p>flightId: {{ flightTouchPoint.flightId }}</p>
+            <p>flightUrl: {{ flightTouchPoint.flightUrl }}</p>
+            <!-- <p>touchpoints: {{ flightTouchPoint.touchpoints }}</p> -->
+            <!-- Add more properties if your flight touch point object has them -->
+        </li>
+    </ul>
+</div>

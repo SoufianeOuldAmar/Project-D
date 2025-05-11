@@ -8,5 +8,8 @@
         <input id="password" formControlName="password" type="password" />
 
         <button type="submit" [disabled]="loginForm.invalid">Login</button>
+        <br>
+        <button (click)="onRegister()">Register</button>
+        <br>
     </form>
 </div>

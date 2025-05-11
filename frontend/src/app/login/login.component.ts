@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ Add HttpClientModule
+import { Router } from '@angular/router'; // ✅ Import Router
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ Add 
 export class LoginComponent {
   loginForm;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -25,10 +26,21 @@ export class LoginComponent {
       .subscribe(
         (response: any) => {
           console.log('Logged in:', response);
+
+          // Optionally store tokens
+          localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('refreshToken', response.refreshToken);
+
+          // Redirect to the desired route (e.g., dashboard)
+          this.router.navigate(['/dashboard']);
         },
         (error) => {
           console.error('Login failed:', error);
         }
       );
   }
+  onRegister() {
+    this.router.navigate(['/register']);
+  }
+
 }
