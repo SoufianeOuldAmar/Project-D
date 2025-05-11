@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Gateway.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {

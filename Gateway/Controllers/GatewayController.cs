@@ -15,7 +15,7 @@ namespace Gateway.Controllers
             _httpClient = new HttpClient();
         }
 
-        [HttpGet("AllFlights")]
+        [HttpGet("flights")]
         public async Task<IActionResult> VluchtenService()
         {
             try
@@ -33,7 +33,7 @@ namespace Gateway.Controllers
             }
         }
 
-        [HttpGet("AllTouchpoints")]
+        [HttpGet("touchpoints")]
         public async Task<IActionResult> TouchpointService()
         {
             try
@@ -53,7 +53,7 @@ namespace Gateway.Controllers
 
 
 
-        [HttpGet("AllVluchtenTouchpoints")]
+        [HttpGet("flights-with-touchpoints")]
         public async Task<IActionResult> AllVluchtenTouchpointServive()
         {
             try
