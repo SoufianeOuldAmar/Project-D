@@ -64,8 +64,8 @@ export class DashboardComponent {
   }
 
   logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
 
     // Redirect to the login page
     this.router.navigate(['/login']);

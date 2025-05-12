@@ -28,8 +28,8 @@ export class LoginComponent {
           console.log('Logged in:', response);
 
           // Optionally store tokens
-          localStorage.setItem('accessToken', response.accessToken);
-          localStorage.setItem('refreshToken', response.refreshToken);
+          sessionStorage.setItem('accessToken', response.accessToken);
+          sessionStorage.setItem('refreshToken', response.refreshToken);
 
           // Redirect to the desired route (e.g., dashboard)
           this.router.navigate(['/dashboard']);

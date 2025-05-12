@@ -6,8 +6,8 @@ export class AuthGuard implements CanActivate {
   private router = inject(Router);
 
   canActivate(): boolean {
-    if (typeof window !== 'undefined' && localStorage.getItem('accessToken')) {
-      console.log('Access granted. Token found.', localStorage.getItem('accessToken'));
+    if (typeof window !== 'undefined' && sessionStorage.getItem('accessToken')) {
+      console.log('Access granted. Token found.', sessionStorage.getItem('accessToken'));
       return true;
     }
 
