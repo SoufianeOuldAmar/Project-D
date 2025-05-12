@@ -39,7 +39,7 @@ export class LoginComponent {
         }
       );
   }
-  onRegister() {
+  toRegister() {
     this.router.navigate(['/register']);
   }
 

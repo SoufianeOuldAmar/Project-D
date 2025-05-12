@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BackendService } from '../backend.service';
 import { CommonModule } from '@angular/common';  // Import CommonModule
+import { Router } from '@angular/router'; // ✅ Import Router
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +15,7 @@ export class DashboardComponent {
   touchPoints: any[] = [];
   flightTouchPoints: any[] = [];
 
-  constructor(private backendService: BackendService) { }
+  constructor(private backendService: BackendService, private router: Router) { }
 
   getFlights(): void {
     this.backendService.getData('flights').subscribe(
@@ -60,6 +61,14 @@ export class DashboardComponent {
   }
   clearFlightTouchPoints() {
     this.flightTouchPoints = [];
+  }
+
+  logout() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
+    // Redirect to the login page
+    this.router.navigate(['/login']);
   }
 
 }

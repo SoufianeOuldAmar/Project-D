@@ -29,6 +29,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMyFrontend", builder =>
+        builder.WithOrigins("http://localhost:4200")  // Allow your frontend URL
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+});
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
@@ -38,6 +46,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+// Enable CORS
+app.UseCors("AllowMyFrontend");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

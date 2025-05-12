@@ -6,12 +6,13 @@ import { LoginComponent } from './app/login/login.component';
 import { DashboardComponent } from './app/dashboard/dashboard.component';
 import { RegisterComponent } from './app/register/register.component';
 import { Routes } from '@angular/router';
+import { AuthGuard } from './app/auth.guard'; // import guard
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', component: DashboardComponent }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }
 ];
 
 bootstrapApplication(AppComponent, {
