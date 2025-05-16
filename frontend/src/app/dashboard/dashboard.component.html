@@ -1,3 +1,4 @@
+<img src="assets/images/logo.jpg">
 <h1>Welcome to the dashboard</h1>
 <button (click)="getFlights()">Get Flights</button>
 <br>
@@ -14,8 +15,7 @@
     <ul>
         <li *ngFor="let flight of flights">
             <p>flightId: {{ flight.flightId }}</p>
-            <p>detailUrl: {{ flight.detailUrl }}</p>
-            <!-- Add more properties if your flight object has them -->
+            <p>detailUrl: <a [href]="flight.detailUrl" target="_blank">{{ flight.detailUrl }}</a></p>
         </li>
     </ul>
 </div>
@@ -26,9 +26,10 @@
     <ul>
         <li *ngFor="let touchPoint of touchPoints">
             <p>idActual: {{ touchPoint.idActual }}</p>
-            <p>touchpointUrl: {{ touchPoint.touchpointUrl }}</p>
+            <p>touchpointUrl: <a [href]="touchPoint.touchpointUrl" target="_blank">{{ touchPoint.touchpointUrl }}</a>
+            </p>
             <p>flightId: {{ touchPoint.flightId }}</p>
-            <p>flightUrl: {{ touchPoint.flightUrl }}</p>
+            <p>flightUrl: <a [href]="touchPoint.flightUrl" target="_blank">{{ touchPoint.flightUrl }}</a></p>
 
             <!-- Add more properties if your touch point object has them -->
         </li>
@@ -41,9 +42,8 @@
     <ul>
         <li *ngFor="let flightTouchPoint of flightTouchPoints">
             <p>flightId: {{ flightTouchPoint.flightId }}</p>
-            <p>flightUrl: {{ flightTouchPoint.flightUrl }}</p>
-            <!-- <p>touchpoints: {{ flightTouchPoint.touchpoints }}</p> -->
-            <!-- Add more properties if your flight touch point object has them -->
+            <p>flightUrl: <a [href]="flightTouchPoint.flightUrl" target="_blank">{{ flightTouchPoint.flightUrl }}</a>
+            </p>
         </li>
     </ul>
 </div>
