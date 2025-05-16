@@ -178,6 +178,4 @@ public partial class FlightExportInfo
     public string Seizoen { get; set; } = null!;
 
     public string? Feestdag { get; set; }
-
-    public short Idactual { get; set; }
 }

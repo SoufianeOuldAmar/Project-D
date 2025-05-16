@@ -34,6 +34,4 @@ public partial class FlightTouchpointInfo
     public DateTime ActualLocal { get; set; }
 
     public string? PaxActual { get; set; }
-
-    public int Idactual { get; set; }
 }
