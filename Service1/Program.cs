@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<Vlucht2024ExportDbContext>(options =>
+builder.Services.AddDbContext<FlightExportDbContext>(options =>
 {
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("FlightExportDb")
