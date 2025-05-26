@@ -7,7 +7,7 @@ public partial class FlightExportInfo
 {
     public string Type { get; set; } = null!;
 
-    public int FlightId { get; set; }
+    public int? FlightId { get; set; }
 
     public int? TimetableId { get; set; }
 
@@ -19,7 +19,7 @@ public partial class FlightExportInfo
 
     public bool Nachtvlucht { get; set; }
 
-    public int FlightCode { get; set; }
+    public int? FlightCode { get; set; }
 
     public string FlightCodeDescription { get; set; } = null!;
 
@@ -35,7 +35,7 @@ public partial class FlightExportInfo
 
     public DateTime ActualLocal { get; set; }
 
-    public int Bewegingen { get; set; }
+    public int? Bewegingen { get; set; }
 
     public string Parkeerpositie { get; set; } = null!;
 
@@ -59,9 +59,9 @@ public partial class FlightExportInfo
 
     public string AircraftRegistration { get; set; } = null!;
 
-    public int Seats { get; set; }
+    public int? Seats { get; set; }
 
-    public int Mtow { get; set; }
+    public int? Mtow { get; set; }
 
     public string AircraftType { get; set; } = null!;
 
@@ -81,41 +81,41 @@ public partial class FlightExportInfo
 
     public string Debiteur { get; set; } = null!;
 
-    public int DebiteurNr { get; set; }
+    public int? DebiteurNr { get; set; }
 
-    public int PaxMale { get; set; }
+    public int? PaxMale { get; set; }
 
-    public int PaxFemale { get; set; }
+    public int? PaxFemale { get; set; }
 
-    public int PaxChild { get; set; }
+    public int? PaxChild { get; set; }
 
-    public int PaxInfant { get; set; }
+    public int? PaxInfant { get; set; }
 
-    public int PaxTransitMale { get; set; }
+    public int? PaxTransitMale { get; set; }
 
-    public int PaxTransitFemale { get; set; }
+    public int? PaxTransitFemale { get; set; }
 
-    public int PaxTransitChild { get; set; }
+    public int? PaxTransitChild { get; set; }
 
-    public int PaxTransitInfant { get; set; }
+    public int? PaxTransitInfant { get; set; }
 
-    public int CrewCabin { get; set; }
+    public int? CrewCabin { get; set; }
 
-    public int CrewCockpit { get; set; }
+    public int? CrewCockpit { get; set; }
 
-    public int BagsWeight { get; set; }
+    public int? BagsWeight { get; set; }
 
-    public int BagsTransitWeight { get; set; }
+    public int? BagsTransitWeight { get; set; }
 
-    public int Bags { get; set; }
+    public int? Bags { get; set; }
 
-    public int BagsTransit { get; set; }
+    public int? BagsTransit { get; set; }
 
     public string Afhandelaar { get; set; } = null!;
 
     public double ForecastPercent { get; set; }
 
-    public int ForecastPax { get; set; }
+    public int? ForecastPax { get; set; }
 
     public double ForecastBabys { get; set; }
 
@@ -123,41 +123,41 @@ public partial class FlightExportInfo
 
     public string Datasource { get; set; } = null!;
 
-    public int TotaalPax { get; set; }
+    public int? TotaalPax { get; set; }
 
-    public int TerminalPax { get; set; }
+    public int? TerminalPax { get; set; }
 
-    public int TotaalPaxBetalend { get; set; }
+    public int? TotaalPaxBetalend { get; set; }
 
-    public int TerminalPaxBetalend { get; set; }
+    public int? TerminalPaxBetalend { get; set; }
 
-    public int TransitPax { get; set; }
+    public int? TransitPax { get; set; }
 
-    public int TransitPaxBetalend { get; set; }
+    public int? TransitPaxBetalend { get; set; }
 
-    public int TotaalCrew { get; set; }
+    public int? TotaalCrew { get; set; }
 
     public string? EmptyCol67 { get; set; }
 
-    public int TerminalCrew { get; set; }
+    public int? TerminalCrew { get; set; }
 
-    public int TotaalSeats { get; set; }
+    public int? TotaalSeats { get; set; }
 
-    public int TerminalSeats { get; set; }
+    public int? TerminalSeats { get; set; }
 
-    public int TotaalBags { get; set; }
+    public int? TotaalBags { get; set; }
 
-    public int TerminalBags { get; set; }
+    public int? TerminalBags { get; set; }
 
-    public int TransitBags { get; set; }
+    public int? TransitBags { get; set; }
 
-    public int TotaalBagsWeight { get; set; }
+    public int? TotaalBagsWeight { get; set; }
 
-    public int TerminalBagsWeight { get; set; }
+    public int? TerminalBagsWeight { get; set; }
 
-    public int TransitBagsWeight { get; set; }
+    public int? TransitBagsWeight { get; set; }
 
-    public int Runway { get; set; }
+    public int? Runway { get; set; }
 
     public double? Longitude { get; set; }
 
