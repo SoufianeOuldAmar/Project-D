@@ -4,37 +4,34 @@ using Project_D.Data;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Project_D.Controllers
+namespace FlightExportsService.Controllers.V1
 {
-    [Route("VluchtenService")]
+    [Route("api/v1/flight-exports")]
     [ApiController]
-    public class ExportServiceController : ControllerBase
+    public class FlightExportsController : ControllerBase
     {
         private readonly FlightExportDbContext _context;
 
-        public ExportServiceController(FlightExportDbContext context)
+        public FlightExportsController(FlightExportDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet("AllVluchtenExports")]
-        public IActionResult GetAllFlightIdsWithLinks()
+        [HttpGet("All-Flights")]
+        public async Task<IActionResult> GetAllFlightIdsWithLinks()
         {
             try
             {
-                var baseUrl = $"http://localhost:5041";
+                var flights = await _context.FlightExportInfos
+                    .OrderBy(f => f.FlightId)
+                    .Select(f => new
+                    {
+                        f.FlightId,
+                        detailUrl = $"http://localhost:5041/api/v1/flight-exports/entry?flightId={f.FlightId}"
+                    })
+                    .ToListAsync();
 
-                var result = _context.FlightExportInfos
-                .OrderBy(f => f.FlightId)  // Orders by FlightId
-                .Take(100)
-                .Select(f => new
-                {
-                    flightId = f.FlightId,
-                    detailUrl = $"{baseUrl}/VluchtenService/entry?flightId={f.FlightId}"//&uniqueId={f.UniqueId}"
-                })
-                .ToList();
-
-                return Ok(result);
+                return Ok(flights);
             }
             catch (Exception ex)
             {
@@ -61,6 +58,46 @@ namespace Project_D.Controllers
             {
                 return StatusCode(500, $"Error retrieving flight entry: {ex.Message}");
             }
+        }
+
+        [HttpGet("by-airline")]
+        public async Task<IActionResult> GetByAirline([FromQuery] string airline)
+        {
+            if (string.IsNullOrWhiteSpace(airline)) return BadRequest(new { message = "Airline is required." });
+
+            var flights = await _context.FlightExportInfos
+                .Where(f => f.AirlineFullname != null && f.AirlineFullname.ToLower() == airline.Trim().ToLower())
+                .OrderBy(f => f.FlightId)
+                .Take(100)
+                .Select(f => new
+                {
+                    f.FlightId,
+                    detailUrl = $"http://localhost:5041/api/v1/flight-exports/entry?flightId={f.FlightId}"
+                }).ToListAsync();
+
+            if (!flights.Any()) return NotFound(new { message = "No flights found for airline." });
+
+            return Ok(flights);
+        }
+
+        [HttpGet("by-airport")]
+        public async Task<IActionResult> GetByAirport([FromQuery] string airportCode)
+        {
+            if (string.IsNullOrWhiteSpace(airportCode)) return BadRequest(new { message = "Airport code is required." });
+
+            var flights = await _context.FlightExportInfos
+                .Where(f => f.Airport != null && f.Airport.ToUpper() == airportCode.Trim().ToUpper())
+                .OrderBy(f => f.FlightId)
+                .Take(100)
+                .Select(f => new
+                {
+                    f.FlightId,
+                    detailUrl = $"http://localhost:5041/api/v1/flight-exports/entry?flightId={f.FlightId}"
+                }).ToListAsync();
+
+            if (!flights.Any()) return NotFound(new { message = "No flights found for airport." });
+
+            return Ok(flights);
         }
 
         [HttpGet("flight-statistics")]
