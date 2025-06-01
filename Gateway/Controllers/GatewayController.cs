@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 
-namespace ApiGateway.Controllers.V1
-{
+namespace ApiGateway.Controllers.V1{
     [ApiController]
     [Route("api/v1/flights")]
     public class FlightsController : ControllerBase
@@ -16,27 +15,27 @@ namespace ApiGateway.Controllers.V1
         }
 
         [HttpGet("all-flights")]
-        public async Task<IActionResult> GetAllFlights()
+    public async Task<IActionResult> GetAllFlights()
+    {
+        try
         {
-            try
+            var url = $"{BaseUrl}/all-flights";  // Match case with your endpoint
+            var response = await _httpClient.GetAsync(url);
+            
+            if (!response.IsSuccessStatusCode)
             {
-                var url = $"{BaseUrl}/all-flights";  // Match case with your endpoint
-                var response = await _httpClient.GetAsync(url);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Forward the error response from the underlying service
-                    return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
-                }
-
-                var flights = await response.Content.ReadAsStringAsync();
-                return Ok(flights);
+                // Forward the error response from the underlying service
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
             }
-            catch (HttpRequestException ex)
-            {
-                return StatusCode(500, $"Failed to retrieve flights: {ex.Message}");
-            }
+
+            var flights = await response.Content.ReadAsStringAsync();
+            return Ok(flights);
         }
+        catch (HttpRequestException ex)
+        {
+            return StatusCode(500, $"Failed to retrieve flights: {ex.Message}");
+        }
+    }
 
         [HttpGet("by-airline")]
         public async Task<IActionResult> GetFlightsByAirline([FromQuery] string airline)
