@@ -44,6 +44,26 @@ export interface FlightStatistics {
   totalFlights: number;
 }
 
+export interface TouchPointStatisticsYearly {
+  jaar: number;
+  aantalVluchten: number;
+  totaalPassagiers: number;
+  gemVertraging: number;
+  topLuchthavens: {
+    luchthaven: string;
+    aantal: number;
+  }[];
+}
+
+export interface TouchPointStatisticsMonthly {
+  jaar: number;
+  maand: string;
+  aantalVluchten: number;
+  totaalPassagiers: number;
+  druksteDag: number;
+  topVliegtuigTypes: string[];
+  bericht: string | null;
+}
 
 
 
@@ -57,6 +77,8 @@ export class AgendaComponent {
   flightStatisticsByYear: FlightStatistics | null = null;
   flightStatisticsByYearMonth: FlightStatistics | null = null;
   flightStatisticsByYearMonthDay: FlightStatistics | null = null;
+  touchPointStatisticsByYear: TouchPointStatisticsYearly | null = null;
+  touchPointStatisticsByMonth: TouchPointStatisticsMonthly | null = null;
   selectedYear: number | null = null;
   selectedMonth: number | null = null;
   selectedDay: number | null = null;
@@ -65,7 +87,7 @@ export class AgendaComponent {
   constructor(private backendService: BackendService, private router: Router) { }
 
   getFlightStatisticsByYear(): void {
-    this.backendService.getData(`Statistics2024`).subscribe(
+    this.backendService.getData(`flights/Statistics2024`).subscribe(
       (response) => {
         this.flightStatisticsByYear = response;
         console.log('Fetched flights:', this.flightStatisticsByYear);
@@ -77,7 +99,7 @@ export class AgendaComponent {
   }
 
   getFlightStatisticsByYearMonth(month: string = ''): void {
-    this.backendService.getData(`monthly-statistics-2024?month=${month}`).subscribe(
+    this.backendService.getData(`flights/monthly-statistics-2024?month=${month}`).subscribe(
       (response) => {
         this.flightStatisticsByYearMonth = response;
         console.log('Fetched flights:', this.flightStatisticsByYearMonth);
@@ -89,7 +111,7 @@ export class AgendaComponent {
   }
 
   getFlightStatisticsByYearMonthDay(startDatetime: string = '', endDatetime: string = ''): void {
-    this.backendService.getData(`flight-statistics?startDatetime=${startDatetime}&endDatetime=${endDatetime}`).subscribe(
+    this.backendService.getData(`flights/flight-statistics?startDatetime=${startDatetime}&endDatetime=${endDatetime}`).subscribe(
       (response) => {
         this.flightStatisticsByYearMonthDay = response;
         console.log('Fetched flights:', this.flightStatisticsByYearMonth);
@@ -100,7 +122,29 @@ export class AgendaComponent {
     );
   }
 
-  
+  getTouchPointStatisticsByYear(): void {
+    this.backendService.getData(`touchpoints/YearlyStats?year=${2024}`).subscribe(
+      (response) => {
+        this.touchPointStatisticsByYear = response;
+        console.log('Fetched touchpoint statistics:', this.touchPointStatisticsByYear);
+      },
+      (error) => {
+        console.error('Error fetching touchpoint statistics:', error);
+      }
+    )
+  }
+
+  getTouchPointStatisticsByYearMonth(month: string = ''): void {
+    this.backendService.getData(`touchpoints/MonthlyStats?year=2024&month=${month}`).subscribe(
+      (response) => {
+        this.touchPointStatisticsByMonth = response;
+        console.log('Fetched touchpoint statistics:', this.touchPointStatisticsByMonth);
+      },
+      (error) => {
+        console.error('Error fetching touchpoint statistics:', error);
+      }
+    )
+  }
 
   ngOnInit() {
     // this.generateDays(this.selectedYear, this.selectedMonth);
@@ -173,6 +217,16 @@ export class AgendaComponent {
     }
   }
 
+  searchByYearTouchPoint() {
+    console.log('Search by year touch point:', this.selectedYear);
+    this.getTouchPointStatisticsByYear();
+  }
+
+  searchByYearMonthTouchPoint() {
+    console.log('Search by year and month touch point:', this.selectedYear, this.selectedMonth);
+    this.getTouchPointStatisticsByYearMonth(String(this.selectedMonth));
+  }
+
   clearFlightStatisticsByYear() {
     this.flightStatisticsByYear = null;
   }
@@ -183,6 +237,14 @@ export class AgendaComponent {
 
   clearFlightStatisticsByYearMonthDay() {
     this.flightStatisticsByYearMonthDay = null;
+  }
+
+  clearTouchPointStatisticsByYear() {
+    this.touchPointStatisticsByYear = null;
+  }
+
+  clearTouchPointStatisticsByMonth() {
+    this.touchPointStatisticsByMonth = null;
   }
 
 }

@@ -14,8 +14,7 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-    { path: 'flight-statistics-agenda', component: AgendaComponent },
-    { path: 'touchpoint-statistics-agenda', component: AgendaComponent }
+    { path: 'statistics', component: AgendaComponent }
 ];
 
 bootstrapApplication(AppComponent, {

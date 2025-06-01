@@ -53,8 +53,9 @@ export class DashboardComponent {
     );
   }
 
-  goToFlightStatistics() { }
-  goToTouchPointStatistics() { }
+  goToStatistics() {
+    this.router.navigate(['/statistics']);
+  }
 
 
   clearFlights() {
