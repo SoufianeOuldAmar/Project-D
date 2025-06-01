@@ -53,6 +53,10 @@ export class DashboardComponent {
     );
   }
 
+  goToFlightStatistics() { }
+  goToTouchPointStatistics() { }
+
+
   clearFlights() {
     this.flights = [];
   }
