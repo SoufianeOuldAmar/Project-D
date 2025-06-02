@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
@@ -5,6 +6,7 @@ using System.Net.Http;
 namespace ApiGateway.Controllers.V1{
     [ApiController]
     [Route("api/v1/flights")]
+    [Authorize]
     public class FlightsController : ControllerBase
     {
         private readonly HttpClient _httpClient;
