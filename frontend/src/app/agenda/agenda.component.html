@@ -14,6 +14,7 @@
 <!-- Dropdown to select month -->
 <select *ngIf="selectedYear" #monthSelect (change)="onMonthSelected(+monthSelect.value)">
     <option value="" disabled selected>Kies een maand</option>
+    <option value=" "></option>
     <option value="1">Januari</option>
     <option value="2">Februari</option>
     <option value="3">Maart</option>
@@ -39,6 +40,7 @@
 <!-- Display generated days -->
 <select *ngIf="days.length > 0 " #daySelect (change)="onDaySelected(+daySelect.value)">
     <option value="" disabled selected>Kies een dag</option>
+    <option value=" "></option>
     <option *ngFor="let day of days" [value]="day">{{ day }}</option>
 </select>
 
