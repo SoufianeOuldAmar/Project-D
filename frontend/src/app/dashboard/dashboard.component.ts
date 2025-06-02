@@ -57,7 +57,6 @@ export class DashboardComponent {
     this.router.navigate(['/statistics']);
   }
 
-
   clearFlights() {
     this.flights = [];
   }
