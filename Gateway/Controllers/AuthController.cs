@@ -44,6 +44,7 @@ namespace Gateway.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
         {
