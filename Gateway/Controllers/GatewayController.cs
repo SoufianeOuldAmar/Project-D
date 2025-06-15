@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 
-namespace ApiGateway.Controllers.V1{
+namespace ApiGateway.Controllers.V1
+{
     [ApiController]
     [Route("api/v1/flights")]
     [Authorize]
@@ -11,43 +12,43 @@ namespace ApiGateway.Controllers.V1{
     {
         private readonly HttpClient _httpClient;
         public readonly string BaseUrl = "http://localhost:5041/api/v1/flight-exports";
+
         public FlightsController()
         {
             _httpClient = new HttpClient();
         }
 
-        [HttpGet("all-flights")]
-    public async Task<IActionResult> GetAllFlights()
-    {
-        try
+        [HttpGet]
+        public async Task<IActionResult> GetAllFlights()
         {
-            var url = $"{BaseUrl}/all-flights";  // Match case with your endpoint
-            var response = await _httpClient.GetAsync(url);
-            
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                // Forward the error response from the underlying service
-                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                var url = $"{BaseUrl}/all-flights-with-ids";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                }
+
+                var flights = await response.Content.ReadAsStringAsync();
+                return Ok(flights);
             }
-
-            var flights = await response.Content.ReadAsStringAsync();
-            return Ok(flights);
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Failed to retrieve flights: {ex.Message}");
+            }
         }
-        catch (HttpRequestException ex)
-        {
-            return StatusCode(500, $"Failed to retrieve flights: {ex.Message}");
-        }
-    }
 
-        [HttpGet("by-airline")]
-        public async Task<IActionResult> GetFlightsByAirline([FromQuery] string airline)
+        [HttpGet("airline/{airline}")]
+        public async Task<IActionResult> GetFlightsByAirline(string airline)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(airline))
                     return BadRequest(new { message = "Airline parameter is required" });
 
-                var url = $"{BaseUrl}/by-airline?airline={airline}";
+                var url = $"{BaseUrl}/by-airline-full-name/{airline}";
                 var response = await _httpClient.GetAsync(url);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -62,16 +63,15 @@ namespace ApiGateway.Controllers.V1{
             }
         }
 
-        // New endpoint for airport filtering
-        [HttpGet("by-airport")]
-        public async Task<IActionResult> GetFlightsByAirport([FromQuery] string airportCode)
+        [HttpGet("airport/{airportName}")]
+        public async Task<IActionResult> GetFlightsByAirport(string airportName)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(airportCode))
+                if (string.IsNullOrWhiteSpace(airportName))
                     return BadRequest(new { message = "Airport code parameter is required" });
 
-                var url = $"{BaseUrl}/by-airport?airportCode={airportCode}";
+                var url = $"{BaseUrl}/by-airport/{airportName}";
                 var response = await _httpClient.GetAsync(url);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -86,10 +86,8 @@ namespace ApiGateway.Controllers.V1{
             }
         }
 
-        [HttpGet("flight-statistics")]
-        public async Task<IActionResult> GetFlightStatistics(
-        [FromQuery] string startDatetime = null,
-        [FromQuery] string endDatetime = null)
+        [HttpGet("statistics")]
+        public async Task<IActionResult> GetFlightStatistics(string startDatetime = null, string endDatetime = null)
         {
             try
             {
@@ -106,17 +104,16 @@ namespace ApiGateway.Controllers.V1{
             }
         }
 
-        [HttpGet("Statistics2024")]
-        public async Task<IActionResult> statistics()
+        [HttpGet("statistics/2024")]
+        public async Task<IActionResult> Get2024Statistics()
         {
             var response = await _httpClient.GetAsync($"{BaseUrl}/flight-statistics?startDatetime=2024-01-01&endDatetime=2024-12-31");
             return await CreateResponse(response);
         }
 
-        [HttpGet("monthly-statistics-2024")]
-        public async Task<IActionResult> GetMonthlyStatistics2024([FromQuery] string month)
+        [HttpGet("statistics/2024/{month}")]
+        public async Task<IActionResult> GetMonthlyStatistics2024(string month)
         {
-            // Validate month parameter
             if (string.IsNullOrWhiteSpace(month))
                 return BadRequest(new { message = "Month parameter is required (format: MM)." });
 
@@ -125,13 +122,10 @@ namespace ApiGateway.Controllers.V1{
 
             try
             {
-                // Create date range for the entire month
                 var startDate = new DateTime(2024, monthNumber, 1);
-                var endDate = startDate.AddMonths(1).AddDays(-1); // Last day of the month
+                var endDate = startDate.AddMonths(1).AddDays(-1);
 
-                // Call the statistics endpoint
-                var url = $"{BaseUrl}/flight-statistics" +
-                        $"?startDatetime={startDate:yyyy-MM-dd}&endDatetime={endDate:yyyy-MM-dd}";
+                var url = $"{BaseUrl}/flight-statistics?startDatetime={startDate:yyyy-MM-dd}&endDatetime={endDate:yyyy-MM-dd}";
 
                 var response = await _httpClient.GetAsync(url);
                 return await CreateResponse(response);
@@ -146,7 +140,7 @@ namespace ApiGateway.Controllers.V1{
             }
         }
 
-        public static async Task<IActionResult> CreateResponse(HttpResponseMessage response)
+        private static async Task<IActionResult> CreateResponse(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
             {
@@ -161,69 +155,70 @@ namespace ApiGateway.Controllers.V1{
 
     [ApiController]
     [Route("api/v1/touchpoints")]
-    public class TouchpointsGatewayController : ControllerBase
+    [Authorize]
+    public class TouchpointsController : ControllerBase
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://localhost:5153/api/v1/touchpoints";
+        private const string BaseUrl = "http://localhost:5153/api/v1/flight-touchpoints";
 
-        public TouchpointsGatewayController(IHttpClientFactory httpClientFactory)
+        public TouchpointsController(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpGet("YearlyStats")]
-        public async Task<IActionResult> GetYearlyStats([FromQuery] int year = 2024)
+        [HttpGet("statistics/yearly")]
+        public async Task<IActionResult> GetYearlyStats(int year = 2024)
         {
-            var url = $"{BaseUrl}/YearlyStats?year={year}";
+            var url = $"{BaseUrl}/yearly-stats?year={year}";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("MonthlyStats")]
-        public async Task<IActionResult> GetMonthlyStats([FromQuery] int year = 2024, [FromQuery] int month = 01)
+        [HttpGet("statistics/monthly")]
+        public async Task<IActionResult> GetMonthlyStats(int year = 2024, int month = 1)
         {
-            var url = $"{BaseUrl}/MonthlyStats?year={year}&month={month}";
+            var url = $"{BaseUrl}/monthly-stats?year={year}&month={month}";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("BusyHoursPerDay")]
-        public async Task<IActionResult> GetBusyHoursPerDay([FromQuery] int timeWindowMinutes = 60)
+        [HttpGet("statistics/busy-hours")]
+        public async Task<IActionResult> GetBusyHours(int timeWindowMinutes = 60)
         {
-            var url = $"{BaseUrl}/BusyHoursPerDay?timeWindowMinutes={timeWindowMinutes}";
+            var url = $"{BaseUrl}/busy-hours-per-day?timeWindowMinutes={timeWindowMinutes}";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("touchpoints")]
-        public async Task<IActionResult> GetAllTouchpointLinks()
+        [HttpGet]
+        public async Task<IActionResult> GetAllTouchpoints()
         {
-            var url = $"{BaseUrl}/touchpoints";
+            var url = $"{BaseUrl}/all-touchpoints-with-ids";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("touchpoints/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetTouchpointById(string id)
         {
-            var url = $"{BaseUrl}/touchpoints/{id}";
+            var url = $"{BaseUrl}/by-touchpoint-id/{id}";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("stats/most-common-traffic-type")]
+        [HttpGet("statistics/traffic-type")]
         public async Task<IActionResult> GetMostCommonTrafficType()
         {
-            var url = $"{BaseUrl}/stats/most-common-traffic-type";
+            var url = $"{BaseUrl}/most-common-traffic-type";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("stats/flights-per-airport")]
+        [HttpGet("statistics/flights-per-airport")]
         public async Task<IActionResult> GetFlightsPerAirport()
         {
-            var url = $"{BaseUrl}/stats/flights-per-airport";
+            var url = $"{BaseUrl}/flights-per-airport";
             return await ForwardRequest(url);
         }
 
-        [HttpGet("stats/landen-met-meeste-vluchten")]
-        public async Task<IActionResult> GetLandenMetMeesteVluchten([FromQuery] int top = 10)
+        [HttpGet("statistics/top-countries")]
+        public async Task<IActionResult> GetCountriesWithMostFlights(int top = 10)
         {
-            var url = $"{BaseUrl}/stats/landen-met-meeste-vluchten?top={top}";
+            var url = $"{BaseUrl}/countries-with-most-flights?top={top}";
             return await ForwardRequest(url);
         }
 

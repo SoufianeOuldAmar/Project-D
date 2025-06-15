@@ -58,7 +58,7 @@ namespace Gateway.Controllers
         }
 
         [HttpGet]
-        public IActionResult AuthenticatedOnlyEndpoint()
+        public IActionResult CheckAuthentication()
         {
             return Ok("You are authenticated");
         }
