@@ -6,21 +6,20 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-
-namespace Service2.Controllers
+namespace TouchpointsService.Controllers.V1
 {
-    [Route("TouchpointsService")]
+    [Route("api/v1/touchpoints")]
     [ApiController]
-    public class Touchpointsservice : ControllerBase
+    public class TouchpointsController : ControllerBase
     {
         private readonly FlightTouchpointDbContext _context;
 
-        public Touchpointsservice(FlightTouchpointDbContext context)
+        public TouchpointsController(FlightTouchpointDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet("stats per jaar")]
+        [HttpGet("YearlyStats")]
         public async Task<IActionResult> GetYearlyStats(int year)
         {
             try
@@ -75,7 +74,7 @@ namespace Service2.Controllers
         }
 
 
-        [HttpGet("stats per maand")]
+        [HttpGet("MonthlyStats")]
         public async Task<IActionResult> GetMonthlyStats(int year, int month)
         {
             try
@@ -152,7 +151,7 @@ namespace Service2.Controllers
             }
         }
 
-        [HttpGet("DruksteUrenPerDag")]
+        [HttpGet("BusyHoursPerDay")]
         public async Task<IActionResult> GetDruksteUrenPerDag(
    [FromQuery] int timeWindowMinutes = 60)
         {

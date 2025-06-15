@@ -1,4 +1,3 @@
-<img src="assets/images/logo.jpg">
 <h1>Welcome to the dashboard</h1>
 <button (click)="getFlights()">Get Flights</button>
 <br>
@@ -6,7 +5,11 @@
 <button (click)="getTouchPoints()">Get Touchpoints</button>
 <br>
 <br>
-<button (click)="getFlightTouchPoints()">Get Flight Touchpoints</button>
+<!-- <button (click)="getFlightTouchPoints()">Get Flight Touchpoints</button>
+<br>
+<br> -->
+<button (click)="goToStatistics()">Check statistics</button>
+<br>
 <br>
 
 <div *ngIf="flights.length > 0;">
@@ -25,11 +28,9 @@
     <button (click)="clearTouchPoints()">Empty touchpoint list</button>
     <ul>
         <li *ngFor="let touchPoint of touchPoints">
-            <p>idActual: {{ touchPoint.idActual }}</p>
-            <p>touchpointUrl: <a [href]="touchPoint.touchpointUrl" target="_blank">{{ touchPoint.touchpointUrl }}</a>
-            </p>
-            <p>flightId: {{ touchPoint.flightId }}</p>
-            <p>flightUrl: <a [href]="touchPoint.flightUrl" target="_blank">{{ touchPoint.flightUrl }}</a></p>
+            <p>id: {{ touchPoint.id }}</p>
+            <p>touchpoint:{{ touchPoint.touchpoint }}</p>
+            <p>url: <a [href]="touchPoint.url" target="_blank">{{ touchPoint.url }}</a></p>
 
             <!-- Add more properties if your touch point object has them -->
         </li>

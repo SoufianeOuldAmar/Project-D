@@ -1,0 +1,251 @@
+<!-- days.component.html -->
+<select #yearSelect (change)="onYearSelected(+yearSelect.value)">
+    <option value="" disabled selected>Kies een jaar</option>
+    <option value="2024">2024</option>
+    <br>
+</select>
+
+<button *ngIf="selectedYear && !selectedMonth" (click)="searchByYear()">Zoek bij jaar (flights)</button>
+<button *ngIf="selectedYear && !selectedMonth" (click)="searchByYearTouchPoint()">Zoek bij jaar (touch points)</button>
+
+<br>
+<br>
+
+<!-- Dropdown to select month -->
+<select *ngIf="selectedYear" #monthSelect (change)="onMonthSelected(+monthSelect.value)">
+    <option value="" disabled selected>Kies een maand</option>
+    <option value=" "></option>
+    <option value="1">Januari</option>
+    <option value="2">Februari</option>
+    <option value="3">Maart</option>
+    <option value="4">April</option>
+    <option value="5">Mei</option>
+    <option value="6">Juni</option>
+    <option value="7">Juli</option>
+    <option value="8">Augustus</option>
+    <option value="9">September</option>
+    <option value="10">Oktober</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+</select>
+
+<button *ngIf="selectedYear && selectedMonth && !selectedDay" (click)="searchByYearMonth()">Zoek bij jaar en
+    maand (flights)</button>
+<button *ngIf="selectedYear && selectedMonth && !selectedDay" (click)="searchByYearMonthTouchPoint()">Zoek bij jaar en
+    maand (touch points)</button>
+
+<br>
+<br>
+
+<!-- Display generated days -->
+<select *ngIf="days.length > 0 " #daySelect (change)="onDaySelected(+daySelect.value)">
+    <option value="" disabled selected>Kies een dag</option>
+    <option value=" "></option>
+    <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+</select>
+
+
+<button *ngIf="selectedYear && selectedMonth && selectedDay" (click)="searchByYearMonthDay()">Zoek bij jaar,
+    maand en dag (flights)</button>
+
+
+<div *ngIf="flightStatisticsByYear;">
+    <h2>Statistieken voor {{ flightStatisticsByYear.startDate | date:'yyyy' }}</h2>
+    <button (click)="clearFlightStatisticsByYear()">Empty flight statistics by year</button>
+
+    <h3>Algemene Vluchtstatistieken</h3>
+    <ul>
+        <li>Totaal aantal vluchten: {{ flightStatisticsByYear.totalFlights }}</li>
+        <li>Vertraagde vluchten: {{ flightStatisticsByYear.delayedFlights }}</li>
+        <li>Aangekomen vluchten: {{ flightStatisticsByYear.arrivingFlights }}</li>
+        <li>Omgeleide vluchten: {{ flightStatisticsByYear.divertedFlights }}</li>
+        <li>Nachtvluchten: {{ flightStatisticsByYear.nachtvluchtFlights }}</li>
+        <li>EU-vluchten: {{ flightStatisticsByYear.euFlights }}</li>
+        <li>Niet-EU vluchten: {{ flightStatisticsByYear.nonEuFlights }}</li>
+        <li>Totaal aantal stoelen: {{ flightStatisticsByYear.totalSeats | number }}</li>
+    </ul>
+
+    <h3>Meest Populaire Luchthavens</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Luchthaven</th>
+                <th>Vluchten</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let airport of flightStatisticsByYear.mostPopularAirports">
+                <td>{{ airport.airport }}</td>
+                <td>{{ airport.flightCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Passagiersstatistieken</h3>
+    <ul>
+        <li>Mannen: {{ flightStatisticsByYear.paxStatistics.male | number }}</li>
+        <li>Vrouwen: {{ flightStatisticsByYear.paxStatistics.female | number }}</li>
+        <li>Kinderen: {{ flightStatisticsByYear.paxStatistics.child | number }}</li>
+        <li>Baby’s: {{ flightStatisticsByYear.paxStatistics.infant | number }}</li>
+        <li>Totaal passagiers: {{ flightStatisticsByYear.paxStatistics.total | number }}</li>
+        <li>Terminal passagiers: {{ flightStatisticsByYear.paxStatistics.terminal | number }}</li>
+        <li>Transit passagiers: {{ flightStatisticsByYear.paxStatistics.transit | number }}</li>
+    </ul>
+
+    <h3>Bagagestatistieken</h3>
+    <ul>
+        <li>Totaal gewicht: {{ flightStatisticsByYear.baggageStatistics.totalWeight | number }} kg</li>
+        <li>Totaal aantal koffers: {{ flightStatisticsByYear.baggageStatistics.totalBags | number }}</li>
+        <li>Transitkoffers: {{ flightStatisticsByYear.baggageStatistics.transitBags }}</li>
+    </ul>
+</div>
+
+<div *ngIf="flightStatisticsByYearMonth">
+    <h2>Statistieken voor {{ flightStatisticsByYearMonth.startDate | date:'yyyy-MM' }}</h2>
+    <button (click)="clearFlightStatisticsByYearMonth()">Empty flight statistics by year and month</button>
+
+    <h3>Algemene Vluchtstatistieken</h3>
+    <ul>
+        <li>Totaal aantal vluchten: {{ flightStatisticsByYearMonth.totalFlights }}</li>
+        <li>Vertraagde vluchten: {{ flightStatisticsByYearMonth.delayedFlights }}</li>
+        <li>Aangekomen vluchten: {{ flightStatisticsByYearMonth.arrivingFlights }}</li>
+        <li>Omgeleide vluchten: {{ flightStatisticsByYearMonth.divertedFlights }}</li>
+        <li>Nachtvluchten: {{ flightStatisticsByYearMonth.nachtvluchtFlights }}</li>
+        <li>EU-vluchten: {{ flightStatisticsByYearMonth.euFlights }}</li>
+        <li>Niet-EU vluchten: {{ flightStatisticsByYearMonth.nonEuFlights }}</li>
+        <li>Totaal aantal stoelen: {{ flightStatisticsByYearMonth.totalSeats | number }}</li>
+    </ul>
+
+    <h3>Meest Populaire Luchthavens</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Luchthaven</th>
+                <th>Vluchten</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let airport of flightStatisticsByYearMonth.mostPopularAirports">
+                <td>{{ airport.airport }}</td>
+                <td>{{ airport.flightCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Passagiersstatistieken</h3>
+    <ul>
+        <li>Mannen: {{ flightStatisticsByYearMonth.paxStatistics.male | number }}</li>
+        <li>Vrouwen: {{ flightStatisticsByYearMonth.paxStatistics.female | number }}</li>
+        <li>Kinderen: {{ flightStatisticsByYearMonth.paxStatistics.child | number }}</li>
+        <li>Baby’s: {{ flightStatisticsByYearMonth.paxStatistics.infant | number }}</li>
+        <li>Totaal passagiers: {{ flightStatisticsByYearMonth.paxStatistics.total | number }}</li>
+        <li>Terminal passagiers: {{ flightStatisticsByYearMonth.paxStatistics.terminal | number }}</li>
+        <li>Transit passagiers: {{ flightStatisticsByYearMonth.paxStatistics.transit | number }}</li>
+    </ul>
+
+    <h3>Bagagestatistieken</h3>
+    <ul>
+        <li>Totaal gewicht: {{ flightStatisticsByYearMonth.baggageStatistics.totalWeight | number }} kg</li>
+        <li>Totaal aantal koffers: {{ flightStatisticsByYearMonth.baggageStatistics.totalBags | number }}</li>
+        <li>Transitkoffers: {{ flightStatisticsByYearMonth.baggageStatistics.transitBags }}</li>
+    </ul>
+</div>
+
+<div *ngIf="flightStatisticsByYearMonthDay">
+    <h2>Statistieken voor {{ flightStatisticsByYearMonthDay.startDate | date:'yyyy-MM-dd' }}</h2>
+    <button (click)="clearFlightStatisticsByYearMonthDay()">Empty flight statistics by year, month and day</button>
+
+    <h3>Algemene Vluchtstatistieken</h3>
+    <ul>
+        <li>Totaal aantal vluchten: {{ flightStatisticsByYearMonthDay.totalFlights }}</li>
+        <li>Vertraagde vluchten: {{ flightStatisticsByYearMonthDay.delayedFlights }}</li>
+        <li>Aangekomen vluchten: {{ flightStatisticsByYearMonthDay.arrivingFlights }}</li>
+        <li>Omgeleide vluchten: {{ flightStatisticsByYearMonthDay.divertedFlights }}</li>
+        <li>Nachtvluchten: {{ flightStatisticsByYearMonthDay.nachtvluchtFlights }}</li>
+        <li>EU-vluchten: {{ flightStatisticsByYearMonthDay.euFlights }}</li>
+        <li>Niet-EU vluchten: {{ flightStatisticsByYearMonthDay.nonEuFlights }}</li>
+        <li>Totaal aantal stoelen: {{ flightStatisticsByYearMonthDay.totalSeats | number }}</li>
+    </ul>
+
+    <h3>Meest Populaire Luchthavens</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Luchthaven</th>
+                <th>Vluchten</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let airport of flightStatisticsByYearMonthDay.mostPopularAirports">
+                <td>{{ airport.airport }}</td>
+                <td>{{ airport.flightCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Passagiersstatistieken</h3>
+    <ul>
+        <li>Mannen: {{ flightStatisticsByYearMonthDay.paxStatistics.male | number }}</li>
+        <li>Vrouwen: {{ flightStatisticsByYearMonthDay.paxStatistics.female | number }}</li>
+        <li>Kinderen: {{ flightStatisticsByYearMonthDay.paxStatistics.child | number }}</li>
+        <li>Baby’s: {{ flightStatisticsByYearMonthDay.paxStatistics.infant | number }}</li>
+        <li>Totaal passagiers: {{ flightStatisticsByYearMonthDay.paxStatistics.total | number }}</li>
+        <li>Terminal passagiers: {{ flightStatisticsByYearMonthDay.paxStatistics.terminal | number }}</li>
+        <li>Transit passagiers: {{ flightStatisticsByYearMonthDay.paxStatistics.transit | number }}</li>
+    </ul>
+
+    <h3>Bagagestatistieken</h3>
+    <ul>
+        <li>Totaal gewicht: {{ flightStatisticsByYearMonthDay.baggageStatistics.totalWeight | number }} kg</li>
+        <li>Totaal aantal koffers: {{ flightStatisticsByYearMonthDay.baggageStatistics.totalBags | number }}</li>
+        <li>Transitkoffers: {{ flightStatisticsByYearMonthDay.baggageStatistics.transitBags }}</li>
+    </ul>
+</div>
+
+<div *ngIf="touchPointStatisticsByYear">
+    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByYear.jaar }}</h2>
+    <button (click)="clearTouchPointStatisticsByYear()">Empty touch point statistics by year</button>
+
+    <ul>
+        <li>Aantal vluchten: {{ touchPointStatisticsByYear.aantalVluchten }}</li>
+        <li>Totaal passagiers: {{ touchPointStatisticsByYear.totaalPassagiers | number }}</li>
+        <li>Gemiddelde vertraging: {{ touchPointStatisticsByYear.gemVertraging | number:'1.1-1' }} minuten</li>
+    </ul>
+
+    <h3>Top luchthavens</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Luchthaven</th>
+                <th>Aantal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let airport of touchPointStatisticsByYear.topLuchthavens">
+                <td>{{ airport.luchthaven }}</td>
+                <td>{{ airport.aantal }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="touchPointStatisticsByMonth">
+    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.maand }} {{ touchPointStatisticsByMonth.jaar }}</h2>
+    <button (click)="clearTouchPointStatisticsByMonth()">Empty touch point statistics by month</button>
+
+    <ul>
+        <li>Aantal vluchten: {{ touchPointStatisticsByMonth.aantalVluchten }}</li>
+        <li>Totaal passagiers: {{ touchPointStatisticsByMonth.totaalPassagiers | number }}</li>
+        <li>Drukste dag: {{ touchPointStatisticsByMonth.druksteDag }}</li>
+    </ul>
+
+    <h3>Top vliegtuigtypes</h3>
+    <ul>
+        <li *ngFor="let type of touchPointStatisticsByMonth.topVliegtuigTypes">{{ type }}</li>
+    </ul>
+
+    <div *ngIf="touchPointStatisticsByMonth.bericht">
+        <h4>Bericht</h4>
+        <p>{{ touchPointStatisticsByMonth.bericht }}</p>
+    </div>
+</div>
