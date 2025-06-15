@@ -92,7 +92,7 @@ namespace TouchpointsService.Controllers.V1
                 var stats = new
                 {
                     Year = year,
-                    FligtCount = flightCount,
+                    FlightCount = flightCount,
                     TotalPassengers = totalPassengers,
                     AverageDelay = averageDelay,
                     TopAirports = topAirports

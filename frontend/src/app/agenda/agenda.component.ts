@@ -45,25 +45,27 @@ export interface FlightStatistics {
 }
 
 export interface TouchPointStatisticsYearly {
-  jaar: number;
-  aantalVluchten: number;
-  totaalPassagiers: number;
-  gemVertraging: number;
-  topLuchthavens: {
-    luchthaven: string;
-    aantal: number;
+  year: number;
+  flightCount: number;
+  totalPassengers: number;
+  averageDelay: number;
+  topAirports: {
+    airport: string;
+    count: number;
   }[];
 }
 
+
 export interface TouchPointStatisticsMonthly {
-  jaar: number;
-  maand: string;
-  aantalVluchten: number;
-  totaalPassagiers: number;
-  druksteDag: number;
-  topVliegtuigTypes: string[];
-  bericht: string | null;
+  year: number;
+  month: string;
+  flightCount: number;
+  totalPassengers: number;
+  busiestDay: number;
+  topAircraftTypes: string[];
+  message: string | null;
 }
+
 
 
 
@@ -87,7 +89,7 @@ export class AgendaComponent {
   constructor(private backendService: BackendService, private router: Router) { }
 
   getFlightStatisticsByYear(): void {
-    this.backendService.getData(`flights/Statistics2024`).subscribe(
+    this.backendService.getData(`flights/statistics`).subscribe(
       (response) => {
         this.flightStatisticsByYear = response;
         console.log('Fetched flights:', this.flightStatisticsByYear);
@@ -99,7 +101,7 @@ export class AgendaComponent {
   }
 
   getFlightStatisticsByYearMonth(month: string = ''): void {
-    this.backendService.getData(`flights/monthly-statistics-2024?month=${month}`).subscribe(
+    this.backendService.getData(`flights/statistics/2024/${month}`).subscribe(
       (response) => {
         this.flightStatisticsByYearMonth = response;
         console.log('Fetched flights:', this.flightStatisticsByYearMonth);
@@ -111,7 +113,7 @@ export class AgendaComponent {
   }
 
   getFlightStatisticsByYearMonthDay(startDatetime: string = '', endDatetime: string = ''): void {
-    this.backendService.getData(`flights/flight-statistics?startDatetime=${startDatetime}&endDatetime=${endDatetime}`).subscribe(
+    this.backendService.getData(`flights/statistics?startDatetime=${startDatetime}&endDatetime=${endDatetime}`).subscribe(
       (response) => {
         this.flightStatisticsByYearMonthDay = response;
         console.log('Fetched flights:', this.flightStatisticsByYearMonth);
@@ -123,7 +125,7 @@ export class AgendaComponent {
   }
 
   getTouchPointStatisticsByYear(): void {
-    this.backendService.getData(`touchpoints/YearlyStats?year=${2024}`).subscribe(
+    this.backendService.getData(`touchpoints/statistics/yearly?year=2024`).subscribe(
       (response) => {
         this.touchPointStatisticsByYear = response;
         console.log('Fetched touchpoint statistics:', this.touchPointStatisticsByYear);
@@ -135,7 +137,7 @@ export class AgendaComponent {
   }
 
   getTouchPointStatisticsByYearMonth(month: string = ''): void {
-    this.backendService.getData(`touchpoints/MonthlyStats?year=2024&month=${month}`).subscribe(
+    this.backendService.getData(`touchpoints/statistics/monthly?year=2024&month=${month}`).subscribe(
       (response) => {
         this.touchPointStatisticsByMonth = response;
         console.log('Fetched touchpoint statistics:', this.touchPointStatisticsByMonth);

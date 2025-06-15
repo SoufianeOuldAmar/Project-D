@@ -18,7 +18,7 @@ export class DashboardComponent {
   constructor(private backendService: BackendService, private router: Router) { }
 
   getFlights(): void {
-    this.backendService.getData('flights/all-flights').subscribe(
+    this.backendService.getData('flights').subscribe(
       (response) => {
         this.flights = response;
         console.log('Fetched flights:', this.flights);
@@ -30,7 +30,7 @@ export class DashboardComponent {
   }
 
   getTouchPoints(): void {
-    this.backendService.getData('touchpoints/touchpoints').subscribe(
+    this.backendService.getData('touchpoints').subscribe(
       (response) => {
         this.touchPoints = response.slice(0, 100); // Limit to first 100
         console.log('Fetched touch points:', this.touchPoints);

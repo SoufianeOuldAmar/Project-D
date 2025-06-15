@@ -203,13 +203,13 @@
 </div>
 
 <div *ngIf="touchPointStatisticsByYear">
-    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByYear.jaar }}</h2>
-    <button (click)="clearTouchPointStatisticsByYear()">Empty touch point statistics by year</button>
+    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByYear.year }}</h2>
+    <button (click)="clearTouchPointStatisticsByYear()">Leeg touchpoint-statistieken per jaar</button>
 
     <ul>
-        <li>Aantal vluchten: {{ touchPointStatisticsByYear.aantalVluchten }}</li>
-        <li>Totaal passagiers: {{ touchPointStatisticsByYear.totaalPassagiers | number }}</li>
-        <li>Gemiddelde vertraging: {{ touchPointStatisticsByYear.gemVertraging | number:'1.1-1' }} minuten</li>
+        <li>Aantal vluchten: {{ touchPointStatisticsByYear.flightCount }}</li>
+        <li>Totaal passagiers: {{ touchPointStatisticsByYear.totalPassengers | number }}</li>
+        <li>Gemiddelde vertraging: {{ touchPointStatisticsByYear.averageDelay | number:'1.1-1' }} minuten</li>
     </ul>
 
     <h3>Top luchthavens</h3>
@@ -221,31 +221,32 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let airport of touchPointStatisticsByYear.topLuchthavens">
-                <td>{{ airport.luchthaven }}</td>
-                <td>{{ airport.aantal }}</td>
+            <tr *ngFor="let airport of touchPointStatisticsByYear.topAirports">
+                <td>{{ airport.airport }}</td>
+                <td>{{ airport.count }}</td>
             </tr>
         </tbody>
     </table>
 </div>
 
+
 <div *ngIf="touchPointStatisticsByMonth">
-    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.maand }} {{ touchPointStatisticsByMonth.jaar }}</h2>
-    <button (click)="clearTouchPointStatisticsByMonth()">Empty touch point statistics by month</button>
+    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.month }} {{ touchPointStatisticsByMonth.year }}</h2>
+    <button (click)="clearTouchPointStatisticsByMonth()">Leeg maandstatistieken touchpoints</button>
 
     <ul>
-        <li>Aantal vluchten: {{ touchPointStatisticsByMonth.aantalVluchten }}</li>
-        <li>Totaal passagiers: {{ touchPointStatisticsByMonth.totaalPassagiers | number }}</li>
-        <li>Drukste dag: {{ touchPointStatisticsByMonth.druksteDag }}</li>
+        <li>Aantal vluchten: {{ touchPointStatisticsByMonth.flightCount }}</li>
+        <li>Totaal passagiers: {{ touchPointStatisticsByMonth.totalPassengers | number }}</li>
+        <li>Drukste dag: {{ touchPointStatisticsByMonth.busiestDay }}</li>
     </ul>
 
     <h3>Top vliegtuigtypes</h3>
     <ul>
-        <li *ngFor="let type of touchPointStatisticsByMonth.topVliegtuigTypes">{{ type }}</li>
+        <li *ngFor="let type of touchPointStatisticsByMonth.topAircraftTypes">{{ type }}</li>
     </ul>
 
-    <div *ngIf="touchPointStatisticsByMonth.bericht">
+    <div *ngIf="touchPointStatisticsByMonth.message">
         <h4>Bericht</h4>
-        <p>{{ touchPointStatisticsByMonth.bericht }}</p>
+        <p>{{ touchPointStatisticsByMonth.message }}</p>
     </div>
 </div>
