@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service1", "Service1.csproj", "{52341520-3D89-4216-95C2-C16D2170879F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportServicexUnitTest", "..\ExportServicexUnitTest\ExportServicexUnitTest.csproj", "{9ACED5E6-31AE-4724-BE38-0E2268901339}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{52341520-3D89-4216-95C2-C16D2170879F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52341520-3D89-4216-95C2-C16D2170879F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52341520-3D89-4216-95C2-C16D2170879F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ACED5E6-31AE-4724-BE38-0E2268901339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ACED5E6-31AE-4724-BE38-0E2268901339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ACED5E6-31AE-4724-BE38-0E2268901339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ACED5E6-31AE-4724-BE38-0E2268901339}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

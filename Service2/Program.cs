@@ -4,6 +4,7 @@ using Service2.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<FlightTouchpointDbContext>(options =>
         builder.Configuration.GetConnectionString("FlightTouchpointDb")
     );
 });
+
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

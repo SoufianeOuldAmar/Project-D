@@ -14,9 +14,11 @@ namespace Gateway.Controllers
 {
     [Route("api/auth")]
     [ApiController]
+    [Authorize]
     public class AuthController(IAuthService authService) : ControllerBase
     {
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
@@ -29,6 +31,7 @@ namespace Gateway.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDto>> Login(UserDto request)
         {
@@ -41,6 +44,7 @@ namespace Gateway.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
         {
@@ -53,9 +57,8 @@ namespace Gateway.Controllers
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet]
-        public IActionResult AuthenticatedOnlyEndpoint()
+        public IActionResult CheckAuthentication()
         {
             return Ok("You are authenticated");
         }
