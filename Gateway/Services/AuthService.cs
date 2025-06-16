@@ -37,6 +37,11 @@ namespace Gateway.Services
 
         public async Task<User?> RegisterAsync(UserDto request)
         {
+            if (!InputValidator.IsValidUsername(request.Username) || !InputValidator.IsValidPassword(request.Password))
+            {
+                return null;
+            }
+
             if (await context.Users.AnyAsync(u => u.Username == request.Username))
             {
                 return null;

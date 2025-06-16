@@ -5,8 +5,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+    options.HttpsPort = 7150;
+});
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
@@ -48,12 +59,10 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// Enable CORS
 app.UseCors("AllowMyFrontend");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

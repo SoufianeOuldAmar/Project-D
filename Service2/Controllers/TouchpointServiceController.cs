@@ -262,6 +262,9 @@ namespace TouchpointsService.Controllers.V1
         {
             try
             {
+                var scheme = Request.Scheme;
+                var host = Request.Host.Value;
+
                 string cacheKey = "AllTouchpointsWithIds";
                 if (_cache.TryGetValue(cacheKey, out object cachedLinks))
                     return Ok(cachedLinks);
@@ -283,7 +286,9 @@ namespace TouchpointsService.Controllers.V1
                             Url = Url.Action(
                                 action: nameof(GetByTouchpointId),
                                 controller: "FlightTouchpoints",
-                                values: new { id }
+                                values: new { id },
+                                protocol: scheme,
+                                host: host
                             )
                         };
                     })
@@ -398,6 +403,7 @@ namespace TouchpointsService.Controllers.V1
                         Airport = g.Key,
                         FlightCount = g.Count()
                     })
+                    .OrderByDescending(x => x.FlightCount)
                     .ToListAsync();
 
                 _cache.Set(cacheKey, stats, TimeSpan.FromMinutes(10));
