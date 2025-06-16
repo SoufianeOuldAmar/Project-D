@@ -38,7 +38,7 @@ input {
 button {
     padding: 10px;
     margin-top: 10px;
-    background-color: #1976d2;
+    background-color: #c40a0a;
     color: white;
     border: none;
     border-radius: 4px;
@@ -51,5 +51,5 @@ button:disabled {
 }
 
 button:hover:not(:disabled) {
-    background-color: #125ea4;
+    background-color: #c40a0a;
 }

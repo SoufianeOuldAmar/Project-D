@@ -16,7 +16,7 @@ button {
     display: block;
     margin: 10px auto;
     padding: 10px 20px;
-    background-color: #1976d2;
+    background-color: #c40a0a;
     color: white;
     border: none;
     border-radius: 6px;
@@ -26,7 +26,7 @@ button {
 }
 
 button:hover {
-    background-color: #125ea4;
+    background-color: #c40a0a;
 }
 
 button:disabled {
@@ -58,7 +58,7 @@ p {
 }
 
 a {
-    color: #1976d2;
+    color: #c40a0a;
     text-decoration: none;
 }
 
