@@ -51,7 +51,7 @@
 
 <div *ngIf="flightStatisticsByYear;">
     <h2>Statistieken voor {{ flightStatisticsByYear.startDate | date:'yyyy' }}</h2>
-    <button (click)="clearFlightStatisticsByYear()">Empty flight statistics by year</button>
+    <button (click)="clearFlightStatisticsByYear()">Leeg vlucht statistieken per jaar</button>
 
     <h3>Algemene Vluchtstatistieken</h3>
     <ul>
@@ -102,7 +102,7 @@
 
 <div *ngIf="flightStatisticsByYearMonth">
     <h2>Statistieken voor {{ flightStatisticsByYearMonth.startDate | date:'yyyy-MM' }}</h2>
-    <button (click)="clearFlightStatisticsByYearMonth()">Empty flight statistics by year and month</button>
+    <button (click)="clearFlightStatisticsByYearMonth()">Leeg vlucht statistieken per maand</button>
 
     <h3>Algemene Vluchtstatistieken</h3>
     <ul>
@@ -153,7 +153,7 @@
 
 <div *ngIf="flightStatisticsByYearMonthDay">
     <h2>Statistieken voor {{ flightStatisticsByYearMonthDay.startDate | date:'yyyy-MM-dd' }}</h2>
-    <button (click)="clearFlightStatisticsByYearMonthDay()">Empty flight statistics by year, month and day</button>
+    <button (click)="clearFlightStatisticsByYearMonthDay()">Leeg vlucht statistieken per jaar, dag en maand</button>
 
     <h3>Algemene Vluchtstatistieken</h3>
     <ul>
@@ -204,7 +204,7 @@
 
 <div *ngIf="touchPointStatisticsByYear">
     <h2>Touchpoint statistieken voor {{ touchPointStatisticsByYear.year }}</h2>
-    <button (click)="clearTouchPointStatisticsByYear()">Leeg touchpoint-statistieken per jaar</button>
+    <button (click)="clearTouchPointStatisticsByYear()">Leeg touchpoint statistieken per jaar</button>
 
     <ul>
         <li>Aantal vluchten: {{ touchPointStatisticsByYear.flightCount }}</li>
@@ -232,7 +232,7 @@
 
 <div *ngIf="touchPointStatisticsByMonth">
     <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.month }} {{ touchPointStatisticsByMonth.year }}</h2>
-    <button (click)="clearTouchPointStatisticsByMonth()">Leeg maandstatistieken touchpoints</button>
+    <button (click)="clearTouchPointStatisticsByMonth()">Leeg touchpoint statistieken per maand</button>
 
     <ul>
         <li>Aantal vluchten: {{ touchPointStatisticsByMonth.flightCount }}</li>

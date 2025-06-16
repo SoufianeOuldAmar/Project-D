@@ -76,3 +76,7 @@ div[ng-reflect-ng-if] {
     border-radius: 6px;
     border: 1px solid #ddd;
 }
+
+select {
+    margin-right: 10px;
+}
