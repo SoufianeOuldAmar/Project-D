@@ -22,7 +22,7 @@ export class RegisterComponent {
 
   onRegister() {
     const registerData = this.registerForm.value;
-    this.http.post('http://localhost:5244/api/auth/register', registerData)
+    this.http.post('https://localhost:7150/api/auth/register', registerData)
       .subscribe(
         (response: any) => {
           console.log('Registered:', response);

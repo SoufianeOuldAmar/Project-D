@@ -22,7 +22,7 @@ export class LoginComponent {
 
   onLogin() {
     const loginData = this.loginForm.value;
-    this.http.post('http://localhost:5244/api/auth/login', loginData)
+    this.http.post('https://localhost:7150/api/auth/login', loginData)
       .subscribe(
         (response: any) => {
           console.log('Logged in:', response);

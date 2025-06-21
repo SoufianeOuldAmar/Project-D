@@ -9,7 +9,7 @@ import { HttpHeaders } from '@angular/common/http';
 })
 export class BackendService {
 
-  private apiUrl = 'http://localhost:5244/api/v1/';  // Update with your API endpoint
+  private apiUrl = 'https://localhost:7150/api/v1/';  // Update with your API endpoint
 
   constructor(private http: HttpClient) { }
 
