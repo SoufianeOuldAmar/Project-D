@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway.csproj", "{64E9F39A-5120-40C8-B6B0-DBA6979DAF1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightGatewayTest", "..\FlightGatewayTest\FlightGatewayTest.csproj", "{D0D969DB-B636-4AAE-8889-381DD76F5C90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{64E9F39A-5120-40C8-B6B0-DBA6979DAF1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64E9F39A-5120-40C8-B6B0-DBA6979DAF1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64E9F39A-5120-40C8-B6B0-DBA6979DAF1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0D969DB-B636-4AAE-8889-381DD76F5C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0D969DB-B636-4AAE-8889-381DD76F5C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0D969DB-B636-4AAE-8889-381DD76F5C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0D969DB-B636-4AAE-8889-381DD76F5C90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

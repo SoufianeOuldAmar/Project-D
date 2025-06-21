@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Project_D.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.Extensions.Hosting;
 
 
 namespace FlightExportsService.Controllers.V1
@@ -26,6 +27,9 @@ namespace FlightExportsService.Controllers.V1
         {
             try
             {
+                var scheme = Request.Scheme;
+                var host = Request.Host.Value;
+
                 string cacheKey = "AllFlightsWithIds";
                 if (_cache.TryGetValue(cacheKey, out List<int> cachedIds))
                 {
@@ -36,7 +40,9 @@ namespace FlightExportsService.Controllers.V1
                             DetailUrl = Url.Action(
                                 action: nameof(GetByFlightId),
                                 controller: "FlightExports",
-                                values: new { flightId = fid }
+                                values: new { flightId = fid },
+                                protocol: scheme,
+                                host: host
                             )
                         })
                         .ToList();
@@ -67,7 +73,9 @@ namespace FlightExportsService.Controllers.V1
                         DetailUrl = Url.Action(
                             action: nameof(GetByFlightId),
                             controller: "FlightExports",
-                            values: new { flightId = fid }
+                            values: new { flightId = fid },
+                            protocol: scheme,
+                            host: host
                         )
                     })
                     .ToList();
@@ -106,6 +114,9 @@ namespace FlightExportsService.Controllers.V1
         {
             try
             {
+                var scheme = Request.Scheme;
+                var host = Request.Host.Value;
+
                 if (string.IsNullOrWhiteSpace(airlineName))
                     return BadRequest(new { Message = "Airline full name is required." });
 
@@ -121,7 +132,9 @@ namespace FlightExportsService.Controllers.V1
                             DetailUrl = Url.Action(
                                 action: nameof(GetByFlightId),
                                 controller: "FlightExports",
-                                values: new { flightId = fid }
+                                values: new { flightId = fid },
+                                protocol: scheme,
+                                host: host
                             )
                         })
                         .ToList();
@@ -156,7 +169,9 @@ namespace FlightExportsService.Controllers.V1
                         DetailUrl = Url.Action(
                             action: nameof(GetByFlightId),
                             controller: "FlightExports",
-                            values: new { flightId = fid }
+                            values: new { flightId = fid },
+                            protocol: scheme,
+                            host: host
                         )
                     })
                     .ToList();
@@ -175,6 +190,9 @@ namespace FlightExportsService.Controllers.V1
         {
             try
             {
+                var scheme = Request.Scheme;
+                var host = Request.Host.Value;
+
                 if (string.IsNullOrWhiteSpace(airportName))
                     return BadRequest(new { Message = "Airport name is required." });
 
@@ -190,7 +208,9 @@ namespace FlightExportsService.Controllers.V1
                             DetailUrl = Url.Action(
                                 action: nameof(GetByFlightId),
                                 controller: "FlightExports",
-                                values: new { flightId = fid }
+                                values: new { flightId = fid },
+                                protocol: scheme,
+                                host: host
                             )
                         })
                         .ToList();
@@ -223,7 +243,9 @@ namespace FlightExportsService.Controllers.V1
                         DetailUrl = Url.Action(
                             action: nameof(GetByFlightId),
                             controller: "FlightExports",
-                            values: new { flightId = fid }
+                            values: new { flightId = fid },
+                            protocol: scheme,
+                            host: host
                         )
                     })
                     .ToList();
