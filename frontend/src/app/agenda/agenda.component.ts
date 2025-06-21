@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { BackendService } from '../backend.service';
 import { Router } from '@angular/router'; // ✅ Import Router
-
-
+import { NgChartsModule } from 'ng2-charts';
+import { ChartData, ChartType } from 'chart.js';
 interface AirportStatistic {
   airport: string;
   flightCount: number;
@@ -67,12 +67,10 @@ export interface TouchPointStatisticsMonthly {
 }
 
 
-
-
 @Component({
   selector: 'app-agenda',
   templateUrl: './agenda.component.html',
-  imports: [NgFor, NgIf, CommonModule],
+  imports: [NgFor, NgIf, CommonModule, NgChartsModule],
   styleUrls: ['./agenda.component.css']
 })
 export class AgendaComponent {
@@ -85,8 +83,24 @@ export class AgendaComponent {
   selectedMonth: number | null = null;
   selectedDay: number | null = null;
   days: number[] = [];
+  barChartType: ChartType = 'bar';
+
 
   constructor(private backendService: BackendService, private router: Router) { }
+
+  // Chart data and options
+  public barChartOptions = {
+    responsive: true,
+  };
+
+  public barChartData: ChartData<'bar'> = {
+    labels: ['JFK', 'LHR', 'AMS', 'CDG'],
+    datasets: [
+      { data: [150, 200, 175, 130], label: 'Flight Count' }
+    ]
+  };
+
+
 
   getFlightStatisticsByYear(): void {
     this.backendService.getData(`flights/statistics`).subscribe(

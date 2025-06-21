@@ -1,3 +1,9 @@
+<div style="display: block; width: 700px; margin: auto;">
+    <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+    </canvas>
+</div>
+
+
 <!-- days.component.html -->
 <select #yearSelect (change)="onYearSelected(+yearSelect.value)">
     <option value="" disabled selected>Kies een jaar</option>
