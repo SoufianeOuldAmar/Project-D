@@ -23,8 +23,18 @@ builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("UserDatabase")));
+var alreadyRegistered = builder.Services.Any(s => s.ServiceType == typeof(DbContextOptions<UserDbContext>));
+// Only register SQL Server when not in a test environment
+if (!builder.Environment.EnvironmentName.Equals("Testing", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<UserDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("UserDatabase")));
+}
+
+
+
+// builder.Services.AddDbContext<UserDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("UserDatabase")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -66,3 +76,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+public partial class Program { }
+// This partial class is used to allow the Program class to be extended in tests or other parts of the application.
