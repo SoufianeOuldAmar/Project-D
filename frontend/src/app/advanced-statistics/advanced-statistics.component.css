@@ -1,0 +1,82 @@
+/* General container styling */
+:host {
+    display: block;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Dropdown styling */
+select {
+    padding: 8px;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Button styling */
+button {
+    margin: 5px 5px 15px 0;
+    padding: 10px 15px;
+    background-color: #c40a0a;
+    color: white;
+    border: none;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c40a0a;
+}
+
+/* Headings */
+h2,
+h3 {
+    margin-top: 25px;
+    color: #333;
+}
+
+/* List styling */
+ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+ul li {
+    margin: 5px 0;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+table th,
+table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #f5f5f5;
+}
+
+/* Section spacing */
+div[ng-reflect-ng-if] {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+select {
+    margin-right: 10px;
+}

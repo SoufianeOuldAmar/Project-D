@@ -11,6 +11,11 @@
         <input id="password" formControlName="password" type="password" />
 
         <button type="submit" [disabled]="loginForm.invalid">Login</button>
+
+        <div *ngIf="errorMessage" style="color: red; margin-top: 10px;">
+            {{ errorMessage }}
+        </div>
+
         <br>
         <br>
         <button (click)="toRegister()">Register</button>
