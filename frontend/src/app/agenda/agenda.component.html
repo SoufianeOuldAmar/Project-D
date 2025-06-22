@@ -1,8 +1,18 @@
-<div style="display: block; width: 700px; margin: auto;">
-    <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
-    </canvas>
+<div style="text-align: center; margin-bottom: 20px;">
+    <label>
+        <input type="checkbox" [(ngModel)]="showGraphs" />
+        Toon grafieken in plaats van HTML
+    </label>
 </div>
 
+<!-- GRAPH VIEW -->
+<!-- <div *ngIf="showGraphs" style="display: block; width: 700px; margin: auto;">
+    <canvas baseChart 
+        [data]="barChartData" 
+        [options]="barChartOptions" 
+        [type]="barChartType">
+    </canvas>
+</div> -->
 
 <!-- days.component.html -->
 <select #yearSelect (change)="onYearSelected(+yearSelect.value)">
@@ -19,8 +29,7 @@
 
 <!-- Dropdown to select month -->
 <select *ngIf="selectedYear" #monthSelect (change)="onMonthSelected(+monthSelect.value)">
-    <option value="" disabled selected>Kies een maand</option>
-    <option value=" "></option>
+    <option value="">Kies een maand</option>
     <option value="1">Januari</option>
     <option value="2">Februari</option>
     <option value="3">Maart</option>
@@ -45,8 +54,7 @@
 
 <!-- Display generated days -->
 <select *ngIf="days.length > 0 " #daySelect (change)="onDaySelected(+daySelect.value)">
-    <option value="" disabled selected>Kies een dag</option>
-    <option value=" "></option>
+    <option value="">Kies een dag</option>
     <option *ngFor="let day of days" [value]="day">{{ day }}</option>
 </select>
 
@@ -55,8 +63,7 @@
     maand en dag (flights)</button>
 
 
-<div *ngIf="flightStatisticsByYear;">
-    <h2>Statistieken voor {{ flightStatisticsByYear.startDate | date:'yyyy' }}</h2>
+<div *ngIf="flightStatisticsByYear && !showGraphs;">
     <button (click)="clearFlightStatisticsByYear()">Leeg vlucht statistieken per jaar</button>
 
     <h3>Algemene Vluchtstatistieken</h3>
@@ -106,8 +113,72 @@
     </ul>
 </div>
 
-<div *ngIf="flightStatisticsByYearMonth">
-    <h2>Statistieken voor {{ flightStatisticsByYearMonth.startDate | date:'yyyy-MM' }}</h2>
+<div *ngIf="flightStatisticsByYear && showGraphs">
+    <button (click)="clearFlightStatisticsByYear()">Leeg vlucht statistieken per jaar</button>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal vluchten: {{
+        flightStatisticsByYear?.totalFlights }}</h4>
+    <h4 style="width: 300px;  height: 50px; margin: auto;">Totaal aantal stoelen: {{ flightStatisticsByYear?.totalSeats
+        | number }}</h4>
+    <br>
+
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYear).datasets"
+            [labels]="getflightStatusChartData(flightStatisticsByYear).labels"
+            [options]="getBarChartOptions('Vlucht status statistieken in: 2024')" [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getEuNonEuChartData(flightStatisticsByYear).datasets"
+            [labels]="getEuNonEuChartData(flightStatisticsByYear).labels"
+            [options]="getBarChartOptions('EU vs Niet-EU vluchten in: 2024')" [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <div style="width: 600px; height: 400px; margin: auto;">
+        <canvas baseChart [data]="getPopularAirportsChartData(flightStatisticsByYear)"
+            [options]="getBarChartOptions('Populaire luchthavens in: 2024')" [type]="'bar'">
+        </canvas>
+    </div>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal passagiers: {{
+        flightStatisticsByYear.paxStatistics.total }}</h4>
+
+    <!-- Passagierstypes -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerTypeChartData(flightStatisticsByYear)"
+            [options]="getBarChartOptions('Passagiersverdeling naar type in: 2024')" [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+
+    <!-- Terminal vs Transit -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerFlowChartData(flightStatisticsByYear)"
+            [options]="getBarChartOptions('Terminal vs Transit passagiers in: 2024')" [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <br>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal gewicht bagage: {{
+        flightStatisticsByYear.baggageStatistics.totalWeight | number }} kg</h4>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal koffers: {{
+        flightStatisticsByYear.baggageStatistics.totalBags | number }}</h4>
+
+    <!-- Bagagestatistieken -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getBaggageChartData(flightStatisticsByYear)"
+            [options]="getBarChartOptions('Bagageverdeling in: 2024')" [type]="'doughnut'">
+        </canvas>
+    </div>
+
+
+</div>
+
+<div *ngIf=" flightStatisticsByYearMonth && !showGraphs">
     <button (click)="clearFlightStatisticsByYearMonth()">Leeg vlucht statistieken per maand</button>
 
     <h3>Algemene Vluchtstatistieken</h3>
@@ -157,7 +228,77 @@
     </ul>
 </div>
 
-<div *ngIf="flightStatisticsByYearMonthDay">
+<div *ngIf="flightStatisticsByYearMonth && showGraphs">
+    <button (click)="clearFlightStatisticsByYearMonth()">Leeg vlucht statistieken per maand</button>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal vluchten: {{
+        flightStatisticsByYearMonth?.totalFlights }}</h4>
+    <h4 style="width: 300px;  height: 50px; margin: auto;">Totaal aantal stoelen: {{
+        flightStatisticsByYearMonth?.totalSeats
+        | number }}</h4>
+    <br>
+
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYearMonth).datasets"
+            [labels]="getflightStatusChartData(flightStatisticsByYearMonth).labels"
+            [options]="getBarChartOptions('Vlucht status statistieken in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getEuNonEuChartData(flightStatisticsByYearMonth).datasets"
+            [labels]="getEuNonEuChartData(flightStatisticsByYearMonth).labels"
+            [options]="getBarChartOptions('EU vs Niet-EU vluchten in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <div style="width: 600px; height: 400px; margin: auto;">
+        <canvas baseChart [data]="getPopularAirportsChartData(flightStatisticsByYearMonth)"
+            [options]="getBarChartOptions('Populaire luchthavens in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'bar'">
+        </canvas>
+    </div>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal passagiers: {{
+        flightStatisticsByYearMonth.paxStatistics.total }}</h4>
+
+    <!-- Passagierstypes -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerTypeChartData(flightStatisticsByYearMonth)"
+            [options]="getBarChartOptions('Passagiersverdeling naar type in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+
+    <!-- Terminal vs Transit -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerFlowChartData(flightStatisticsByYearMonth)"
+            [options]="getBarChartOptions('Terminal vs Transit passagiers in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <br>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal gewicht bagage: {{
+        flightStatisticsByYearMonth.baggageStatistics.totalWeight | number }} kg</h4>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal koffers: {{
+        flightStatisticsByYearMonth.baggageStatistics.totalBags | number }}</h4>
+
+    <!-- Bagagestatistieken -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getBaggageChartData(flightStatisticsByYearMonth)"
+            [options]="getBarChartOptions('Bagageverdeling in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+</div>
+
+<div *ngIf="flightStatisticsByYearMonthDay && !showGraphs">
     <h2>Statistieken voor {{ flightStatisticsByYearMonthDay.startDate | date:'yyyy-MM-dd' }}</h2>
     <button (click)="clearFlightStatisticsByYearMonthDay()">Leeg vlucht statistieken per jaar, dag en maand</button>
 
@@ -208,7 +349,77 @@
     </ul>
 </div>
 
-<div *ngIf="touchPointStatisticsByYear">
+<div *ngIf="flightStatisticsByYearMonthDay && showGraphs">
+    <button (click)="clearFlightStatisticsByYearMonthDay()">Leeg vlucht statistieken per jaar</button>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal vluchten: {{
+        flightStatisticsByYearMonthDay?.totalFlights }}</h4>
+    <h4 style="width: 300px;  height: 50px; margin: auto;">Totaal aantal stoelen: {{
+        flightStatisticsByYearMonthDay?.totalSeats
+        | number }}</h4>
+    <br>
+
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYearMonthDay).datasets"
+            [labels]="getflightStatusChartData(flightStatisticsByYearMonthDay).labels"
+            [options]="getBarChartOptions('Vlucht status statistieken in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [datasets]="getEuNonEuChartData(flightStatisticsByYearMonthDay).datasets"
+            [labels]="getEuNonEuChartData(flightStatisticsByYearMonthDay).labels"
+            [options]="getBarChartOptions('EU vs Niet-EU vluchten in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <div style="width: 600px; height: 400px; margin: auto;">
+        <canvas baseChart [data]="getPopularAirportsChartData(flightStatisticsByYearMonthDay)"
+            [options]="getBarChartOptions('Populaire luchthavens in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'bar'">
+        </canvas>
+    </div>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal passagiers: {{
+        flightStatisticsByYearMonthDay.paxStatistics.total }}</h4>
+
+    <!-- Passagierstypes -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerTypeChartData(flightStatisticsByYearMonthDay)"
+            [options]="getBarChartOptions('Passagiersverdeling naar type in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+    <br>
+
+    <!-- Terminal vs Transit -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getPassengerFlowChartData(flightStatisticsByYearMonthDay)"
+            [options]="getBarChartOptions('Terminal vs Transit passagiers in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+
+    <br>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal gewicht bagage: {{
+        flightStatisticsByYearMonthDay.baggageStatistics.totalWeight | number }} kg</h4>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal koffers: {{
+        flightStatisticsByYearMonthDay.baggageStatistics.totalBags | number }}</h4>
+
+    <!-- Bagagestatistieken -->
+    <div style="width: 300px; height: 300px; margin: auto;">
+        <canvas baseChart [data]="getBaggageChartData(flightStatisticsByYearMonthDay)"
+            [options]="getBarChartOptions('Bagageverdeling in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
+            [type]="'doughnut'">
+        </canvas>
+    </div>
+</div>
+
+<div *ngIf="touchPointStatisticsByYear && !showGraphs">
     <h2>Touchpoint statistieken voor {{ touchPointStatisticsByYear.year }}</h2>
     <button (click)="clearTouchPointStatisticsByYear()">Leeg touchpoint statistieken per jaar</button>
 
@@ -235,9 +446,29 @@
     </table>
 </div>
 
+<div *ngIf="touchPointStatisticsByYear && showGraphs">
+    <button (click)="clearTouchPointStatisticsByYear()">Leeg touchpoint statistieken per jaar</button>
 
-<div *ngIf="touchPointStatisticsByMonth">
-    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.month }} {{ touchPointStatisticsByMonth.year }}</h2>
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal vluchten: {{
+        touchPointStatisticsByYear.flightCount }}</h4>
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal passagiers: {{
+        touchPointStatisticsByYear.totalPassengers | number }}</h4>
+    <h4 style="width: 300px; height: 50px; margin: auto;">Gemiddelde vertraging: {{
+        touchPointStatisticsByYear.averageDelay | number:'1.1-1' }} minuten
+    </h4>
+
+    <div style="width: 500px; margin: auto;">
+        <canvas baseChart [data]="getTouchPointTopAirportsChartData(touchPointStatisticsByYear)"
+            [options]="getBarChartOptions('Top luchthavens (Touchpoints) in: ' + touchPointStatisticsByYear.year)"
+            [type]="'bar'">
+        </canvas>
+    </div>
+
+</div>
+
+<div *ngIf="touchPointStatisticsByMonth && !showGraphs">
+    <h2>Touchpoint statistieken voor {{ touchPointStatisticsByMonth.month }} {{ touchPointStatisticsByMonth.year }}
+    </h2>
     <button (click)="clearTouchPointStatisticsByMonth()">Leeg touchpoint statistieken per maand</button>
 
     <ul>
@@ -255,4 +486,23 @@
         <h4>Bericht</h4>
         <p>{{ touchPointStatisticsByMonth.message }}</p>
     </div>
+</div>
+
+<div *ngIf="touchPointStatisticsByMonth && showGraphs">
+    <button (click)="clearTouchPointStatisticsByMonth()">Leeg touchpoint statistieken per maand</button>
+
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal vluchten: {{
+        touchPointStatisticsByMonth.flightCount }}</h4>
+    <h4 style="width: 300px; height: 50px; margin: auto;">Totaal aantal passagiers: {{
+        touchPointStatisticsByMonth.totalPassengers | number }}</h4>
+    <h4 style="width: 300px; height: 50px; margin: auto;">Drukste dag: {{
+        touchPointStatisticsByMonth.busiestDay }}</h4>
+    
+    <div *ngIf="touchPointStatisticsByMonth" style="width: 500px; margin: auto;">
+        <canvas baseChart [data]="getTouchPointTopAircraftChartData(touchPointStatisticsByMonth)"
+            [options]="getBarChartOptions('Top vliegtuigtypes in: ' + touchPointStatisticsByMonth.month + ' ' + touchPointStatisticsByMonth.year)"
+            [type]="'bar'">
+        </canvas>
+    </div>
+
 </div>

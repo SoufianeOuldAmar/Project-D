@@ -4,6 +4,9 @@ import { BackendService } from '../backend.service';
 import { Router } from '@angular/router'; // ✅ Import Router
 import { NgChartsModule } from 'ng2-charts';
 import { ChartData, ChartType } from 'chart.js';
+import { FormsModule } from '@angular/forms';
+import { ChartOptions } from 'chart.js';
+
 interface AirportStatistic {
   airport: string;
   flightCount: number;
@@ -70,7 +73,7 @@ export interface TouchPointStatisticsMonthly {
 @Component({
   selector: 'app-agenda',
   templateUrl: './agenda.component.html',
-  imports: [NgFor, NgIf, CommonModule, NgChartsModule],
+  imports: [NgFor, NgIf, CommonModule, NgChartsModule, FormsModule],
   styleUrls: ['./agenda.component.css']
 })
 export class AgendaComponent {
@@ -84,23 +87,47 @@ export class AgendaComponent {
   selectedDay: number | null = null;
   days: number[] = [];
   barChartType: ChartType = 'bar';
+  showGraphs: boolean = false; // Toggle for showing graphs
 
 
   constructor(private backendService: BackendService, private router: Router) { }
 
   // Chart data and options
-  public barChartOptions = {
+  barChartOptions: ChartOptions = {
     responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Vluchtstatus Verdeling',  // Example title — you can customize or pass dynamically if you want
+        font: {
+          size: 18
+        }
+      },
+      legend: {
+        display: true,
+        position: 'bottom',
+      }
+    }
   };
 
-  public barChartData: ChartData<'bar'> = {
-    labels: ['JFK', 'LHR', 'AMS', 'CDG'],
-    datasets: [
-      { data: [150, 200, 175, 130], label: 'Flight Count' }
-    ]
-  };
-
-
+  getBarChartOptions(title: string): ChartOptions {
+    return {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 18
+          }
+        },
+        legend: {
+          display: true,
+          position: 'bottom',
+        }
+      }
+    };
+  }
 
   getFlightStatisticsByYear(): void {
     this.backendService.getData(`flights/statistics`).subscribe(
@@ -161,6 +188,142 @@ export class AgendaComponent {
       }
     )
   }
+
+
+  getflightStatusChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+    if (!statistics) {
+      return { labels: [], datasets: [] };
+    }
+    return {
+      labels: ['Vertraagd', 'Aangekomen', 'Omgeleid', 'Nachtvlucht'],
+      datasets: [{
+        data: [
+          statistics.delayedFlights,
+          statistics.arrivingFlights,
+          statistics.divertedFlights,
+          statistics.nachtvluchtFlights
+        ],
+        backgroundColor: ['#f54242', '#42f554', '#f5a142', '#4287f5']
+      }]
+    };
+  }
+
+  getEuNonEuChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+    if (!statistics) {
+      return { labels: [], datasets: [] };
+    }
+    return {
+      labels: ['EU Vluchten', 'Niet EU Vluchten'],
+      datasets: [{
+        data: [statistics.euFlights, statistics.nonEuFlights],
+        backgroundColor: ['#42f554', '#f54242']
+      }]
+    };
+  }
+
+  getPopularAirportsChartData(statistics: FlightStatistics): ChartData<'bar'> {
+    if (!statistics || !statistics.mostPopularAirports) {
+      return { labels: [], datasets: [] };
+    }
+
+    const labels = statistics.mostPopularAirports.map(a => a.airport);
+    const data = statistics.mostPopularAirports.map(a => a.flightCount);
+
+    return {
+      labels,
+      datasets: [{
+        label: 'Aantal vluchten',
+        data,
+        backgroundColor: '#4287f5'
+      }]
+    };
+  }
+
+  getPassengerTypeChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+    if (!statistics || !statistics.paxStatistics) {
+      return { labels: [], datasets: [] };
+    }
+
+    const pax = statistics.paxStatistics;
+
+    return {
+      labels: ['Mannen', 'Vrouwen', 'Kinderen', 'Baby’s'],
+      datasets: [{
+        data: [pax.male, pax.female, pax.child, pax.infant],
+        backgroundColor: ['#4287f5', '#f54291', '#f5a142', '#b542f5']
+      }]
+    };
+  }
+
+  getPassengerFlowChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+    if (!statistics || !statistics.paxStatistics) {
+      return { labels: [], datasets: [] };
+    }
+
+    const pax = statistics.paxStatistics;
+
+    return {
+      labels: ['Terminal passagiers', 'Transit passagiers'],
+      datasets: [{
+        data: [pax.terminal, pax.transit],
+        backgroundColor: ['#42f554', '#f54242']
+      }]
+    };
+  }
+
+  getBaggageChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+    if (!statistics || !statistics.baggageStatistics) {
+      return { labels: [], datasets: [] };
+    }
+
+    const bags = statistics.baggageStatistics;
+
+    return {
+      labels: ['Terminal koffers', 'Transit koffers'],
+      datasets: [{
+        data: [bags.terminalBags, bags.transitBags],
+        backgroundColor: ['#4287f5', '#f5a142']
+      }]
+    };
+  }
+
+  getTouchPointTopAirportsChartData(statistics: TouchPointStatisticsYearly): ChartData<'bar'> {
+    if (!statistics || !statistics.topAirports || statistics.topAirports.length === 0) {
+      return { labels: [], datasets: [] };
+    }
+
+    return {
+      labels: statistics.topAirports.map(a => a.airport),
+      datasets: [{
+        label: 'Aantal vluchten',
+        data: statistics.topAirports.map(a => a.count),
+        backgroundColor: '#42a5f5'
+      }]
+    };
+  }
+
+  getTouchPointTopAircraftChartData(statistics: TouchPointStatisticsMonthly): ChartData<'bar'> {
+    if (!statistics || !statistics.topAircraftTypes || statistics.topAircraftTypes.length === 0) {
+      return { labels: [], datasets: [] };
+    }
+
+    // Since you only have an array of aircraft type strings, 
+    // count occurrences of each type (in case duplicates exist)
+    const typeCounts = statistics.topAircraftTypes.reduce((acc, type) => {
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      labels: Object.keys(typeCounts),
+      datasets: [{
+        label: 'Aantal vluchten',
+        data: Object.values(typeCounts),
+        backgroundColor: '#66bb6a'
+      }]
+    };
+  }
+
 
   ngOnInit() {
     // this.generateDays(this.selectedYear, this.selectedMonth);
