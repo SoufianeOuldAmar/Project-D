@@ -69,6 +69,35 @@ export interface TouchPointStatisticsMonthly {
 
 
 
+export interface TrafficTypeStats {
+  TrafficType: string;
+  Count: number;
+  Percentage: number;
+}
+
+export interface TrafficTypeResponse {
+  MostCommonType: TrafficTypeStats;
+  AllTypes: TrafficTypeStats[];
+}
+
+export interface FlightsPerAirport {
+  Airport: string;
+  FlightCount: number;
+}
+
+export interface TopCountry {
+  Country: string;
+  FlightCount: number;
+  MostPopularAirport: string;
+}
+
+export interface BusyHourStats {
+  Day: string;
+  BusiestPeriod: string;
+  TouchpointCount: number;
+}
+
+
 @Component({
   selector: 'app-agenda',
   templateUrl: './agenda.component.html',
@@ -81,10 +110,15 @@ export class AgendaComponent {
   flightStatisticsByYearMonthDay: FlightStatistics | null = null;
   touchPointStatisticsByYear: TouchPointStatisticsYearly | null = null;
   touchPointStatisticsByMonth: TouchPointStatisticsMonthly | null = null;
+  trafficTypeStats: TrafficTypeResponse | null = null;
+  flightsPerAirport: FlightsPerAirport[] = [];
+  topCountries: TopCountry[] = [];
   selectedYear: number | null = null;
   selectedMonth: number | null = null;
   selectedDay: number | null = null;
+  busyHours: BusyHourStats[] = [];
   days: number[] = [];
+
 
   constructor(private backendService: BackendService, private router: Router) { }
 
@@ -248,5 +282,65 @@ export class AgendaComponent {
   clearTouchPointStatisticsByMonth() {
     this.touchPointStatisticsByMonth = null;
   }
+
+
+
+ getTrafficType(): void {
+  this.backendService.getData('touchpoints/statistics/traffic-type').subscribe(
+    (response: TrafficTypeResponse) => {
+      this.trafficTypeStats = response;
+      console.log('Traffic type stats:', response);
+    },
+    (error) => {
+      console.error('Error fetching traffic type stats:', error);
+    }
+  );
+}
+
+
+getFlightsPerAirport(): void {
+  this.backendService.getData('touchpoints/statistics/flights-per-airport').subscribe(
+    (response: FlightsPerAirport[]) => {
+      this.flightsPerAirport = response;
+    },
+    (error) => {
+      console.error('Error fetching flights per airport:', error);
+    }
+  );
+}
+
+getTopCountries(top: number = 10): void {
+  this.backendService.getData(`touchpoints/statistics/top-countries?top=${top}`).subscribe(
+    (response: TopCountry[]) => {
+      this.topCountries = response;
+      console.log('Top countries:', response);
+    },
+    (error) => {
+      console.error('Error fetching top countries:', error);
+    }
+  );
+}
+
+getBusyHours(timeWindowMinutes: number = 60): void {
+  this.backendService.getData(`touchpoints/statistics/busy-hours?timeWindowMinutes=${timeWindowMinutes}`).subscribe(
+    (response: BusyHourStats[]) => {
+      this.busyHours = response;
+      console.log('Busy hours per day:', response);
+    },
+    (error) => {
+      console.error('Error fetching busy hours:', error);
+    }
+  );
+}
+
+
+
+
+
+
+
+
+
+
 
 }
