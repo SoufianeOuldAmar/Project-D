@@ -13,11 +13,14 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpsRedirection(options =>
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-    options.HttpsPort = 7150;
-});
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+        options.HttpsPort = 7150;
+    });
+}
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
@@ -25,7 +28,7 @@ builder.Services.AddOpenApi();
 
 var alreadyRegistered = builder.Services.Any(s => s.ServiceType == typeof(DbContextOptions<UserDbContext>));
 // Only register SQL Server when not in a test environment
-if (!builder.Environment.EnvironmentName.Equals("Testing", StringComparison.OrdinalIgnoreCase))
+if (!builder.Environment.IsEnvironment("Testing"))
 {
     builder.Services.AddDbContext<UserDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("UserDatabase")));
@@ -51,6 +54,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMyFrontend", builder =>
@@ -71,7 +76,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowMyFrontend");
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

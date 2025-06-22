@@ -20,7 +20,7 @@ public static class JwtTokenHelper
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TestSecret));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
         var token = new JwtSecurityToken(
             issuer: TestIssuer,

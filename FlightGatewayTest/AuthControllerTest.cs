@@ -125,10 +125,23 @@ public async Task Login_ValidCredentials_ReturnsOk()
     [Fact]
     public async Task AdminOnlyEndpoint_AsUser_ReturnsForbidden()
     {
-        var token = JwtTokenHelper.GenerateToken("existinguser", "User");
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        // 1) Log in as the seeded regular user to get a bona-fide HS512 token
+        var loginDto = new UserDto
+        {
+            Username = "existinguser",
+            Password = "Password123!"
+        };
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var tokenDto = await loginResponse.Content.ReadFromJsonAsync<TokenResponseDto>();
+        Assert.False(string.IsNullOrEmpty(tokenDto?.AccessToken));
+
+        // 2) Use that token on /admin-only
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", tokenDto.AccessToken);
 
         var response = await _client.GetAsync("/api/auth/admin-only");
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
