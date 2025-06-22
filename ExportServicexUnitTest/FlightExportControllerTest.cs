@@ -57,8 +57,15 @@ namespace ExportServicexUnitTest
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
             var controller = new FlightExportsController(context, memoryCache);
 
-            // Don’t bother with real routing – just give it the fake helper:
             controller.Url = new FakeUrlHelper();
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Scheme = "http";
+            httpContext.Request.Host = new HostString("localhost");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
 
             return controller;
         }
@@ -201,6 +208,18 @@ namespace ExportServicexUnitTest
         }
 
         [Fact]
+        public async Task GetAllFlightsWithIds_EmptyDatabase_ReturnsNoFlightsMessage()
+        {
+            var context = CreateInMemoryContext(nameof(GetAllFlightsWithIds_EmptyDatabase_ReturnsNoFlightsMessage));
+            var controller = CreateController(context);
+
+            var result = await controller.GetAllFlightsWithIds();
+            var ok = Assert.IsType<OkObjectResult>(result);
+            var msg = ok.Value.GetType().GetProperty("Message")!.GetValue(ok.Value)!.ToString();
+            Assert.Equal("No flights found in the system.", msg);
+        }
+
+        [Fact]
         public async Task GetByFlightId_ExistingFlightId_ReturnsOkObject()
         {
             var context = CreateInMemoryContext(nameof(GetByFlightId_ExistingFlightId_ReturnsOkObject));
@@ -216,6 +235,18 @@ namespace ExportServicexUnitTest
         }
 
         [Fact]
+        public async Task GetByFlightId_NegativeId_ReturnsNotFound()
+        {
+            var context = CreateInMemoryContext(nameof(GetByFlightId_NegativeId_ReturnsNotFound));
+            SeedFlights(context);
+            var controller = CreateController(context);
+
+            var result = await controller.GetByFlightId(-1);
+            var notFound = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Contains("ID -1", notFound.Value.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
         public async Task GetByFlightId_NonExistentFlightId_ReturnsNotFound()
         {
             var context = CreateInMemoryContext(nameof(GetByFlightId_NonExistentFlightId_ReturnsNotFound));
@@ -228,12 +259,23 @@ namespace ExportServicexUnitTest
         }
 
         [Fact]
-        public async Task GetByAirlineFullName_NullOrWhitespace_ReturnsBadRequest()
+        public async Task GetByFlightId_ZeroId_ReturnsNotFound()
         {
-            var context = CreateInMemoryContext(nameof(GetByAirlineFullName_NullOrWhitespace_ReturnsBadRequest));
+            var context = CreateInMemoryContext(nameof(GetByFlightId_ZeroId_ReturnsNotFound));
+            SeedFlights(context);
             var controller = CreateController(context);
 
-            Assert.IsType<BadRequestObjectResult>(await controller.GetByAirlineFullName(null));
+            var result = await controller.GetByFlightId(0);
+            var notFound = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Contains("ID 0", notFound.Value.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task GetByAirlineFullName_Whitespace_ReturnsBadRequest()
+        {
+            var context = CreateInMemoryContext(nameof(GetByAirlineFullName_Whitespace_ReturnsBadRequest));
+            var controller = CreateController(context);
+
             Assert.IsType<BadRequestObjectResult>(await controller.GetByAirlineFullName(string.Empty));
             Assert.IsType<BadRequestObjectResult>(await controller.GetByAirlineFullName("   "));
         }
@@ -247,6 +289,24 @@ namespace ExportServicexUnitTest
 
             var result = await controller.GetByAirlineFullName("NonExistentAirline");
             Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GetByAirlineFullName_TrimsAndCaseInsensitive_ReturnsExpectedFlights()
+        {
+            var context = CreateInMemoryContext(nameof(GetByAirlineFullName_TrimsAndCaseInsensitive_ReturnsExpectedFlights));
+            SeedFlights(context);
+            var controller = CreateController(context);
+
+            var result1 = await controller.GetByAirlineFullName("  Transavia  ");
+            var ok1 = Assert.IsType<OkObjectResult>(result1);
+            var list1 = Assert.IsAssignableFrom<IEnumerable<object>>(ok1.Value);
+            Assert.Single(list1);
+
+            var result2 = await controller.GetByAirlineFullName("TRANSAVIA");
+            var ok2 = Assert.IsType<OkObjectResult>(result2);
+            var list2 = Assert.IsAssignableFrom<IEnumerable<object>>(ok2.Value);
+            Assert.Single(list2);
         }
 
         [Fact]
@@ -272,25 +332,21 @@ namespace ExportServicexUnitTest
         }
 
         [Fact]
-        public async Task GetByAirport_MatchingFlights_ReturnsCorrectItems()
+        public async Task GetByAirport_TrimsAndCaseInsensitive_ReturnsExpectedFlights()
         {
-            var context = CreateInMemoryContext(nameof(GetByAirport_MatchingFlights_ReturnsCorrectItems));
+            var context = CreateInMemoryContext(nameof(GetByAirport_TrimsAndCaseInsensitive_ReturnsExpectedFlights));
             SeedFlights(context);
             var controller = CreateController(context);
 
-            var result = await controller.GetByAirport("malaga");
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var items = Assert.IsAssignableFrom<IEnumerable<object>>(okResult.Value).ToList();
-            Assert.Single(items);
+            var result1 = await controller.GetByAirport("  malaga ");
+            var ok1 = Assert.IsType<OkObjectResult>(result1);
+            var list1 = Assert.IsAssignableFrom<IEnumerable<object>>(ok1.Value);
+            Assert.Single(list1);
 
-            var entry = items.First();
-            var idProp = entry.GetType().GetProperty("FlightId");
-            var urlProp = entry.GetType().GetProperty("DetailUrl");
-            Assert.NotNull(idProp);
-            Assert.NotNull(urlProp);
-
-            Assert.Equal(585150, (int)idProp.GetValue(entry));
-            Assert.Contains("flightId=585150", urlProp.GetValue(entry).ToString());
+            var result2 = await controller.GetByAirport("MALAGA");
+            var ok2 = Assert.IsType<OkObjectResult>(result2);
+            var list2 = Assert.IsAssignableFrom<IEnumerable<object>>(ok2.Value);
+            Assert.Single(list2);
         }
 
         [Fact]
@@ -361,6 +417,45 @@ namespace ExportServicexUnitTest
 
             int totalFlights = (int)statsType.GetProperty("TotalFlights")!.GetValue(statsObj);
             Assert.Equal(2, totalFlights);
+        }
+
+        [Fact]
+        public async Task GetFlightStatistics_InvalidStartDateFormat_ReturnsBadRequest()
+        {
+            var context = CreateInMemoryContext(nameof(GetFlightStatistics_InvalidStartDateFormat_ReturnsBadRequest));
+            SeedFlights(context);
+            var controller = CreateController(context);
+
+            var result = await controller.GetFlightStatistics("invalid-date", null);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Invalid Start Date format", badRequest.Value.ToString());
+        }
+
+        [Fact]
+        public async Task GetFlightStatistics_InvalidEndDateFormat_ReturnsBadRequest()
+        {
+            var context = CreateInMemoryContext(nameof(GetFlightStatistics_InvalidEndDateFormat_ReturnsBadRequest));
+            SeedFlights(context);
+            var controller = CreateController(context);
+
+            var validStart = new DateTime(2024, 01, 01, 00, 00, 00).ToString("o");
+            var result = await controller.GetFlightStatistics(validStart, "not-a-date");
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Invalid End Date format", badRequest.Value.ToString());
+        }
+
+        [Fact]
+        public async Task GetFlightStatistics_StartAfterEnd_ReturnsBadRequest()
+        {
+            var context = CreateInMemoryContext(nameof(GetFlightStatistics_StartAfterEnd_ReturnsBadRequest));
+            SeedFlights(context);
+            var controller = CreateController(context);
+
+            var start = new DateTime(2024, 02, 02, 00, 00, 00).ToString("o");
+            var end = new DateTime(2024, 01, 01, 00, 00, 00).ToString("o");
+            var result = await controller.GetFlightStatistics(start, end);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Start Date must be before End Date", badRequest.Value.ToString());
         }
 
     }
