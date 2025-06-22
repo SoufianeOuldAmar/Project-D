@@ -82,6 +82,7 @@ export class AgendaComponent {
   flightStatisticsByYearMonthDay: FlightStatistics | null = null;
   touchPointStatisticsByYear: TouchPointStatisticsYearly | null = null;
   touchPointStatisticsByMonth: TouchPointStatisticsMonthly | null = null;
+
   selectedYear: number | null = null;
   selectedMonth: number | null = null;
   selectedDay: number | null = null;
@@ -190,7 +191,7 @@ export class AgendaComponent {
   }
 
 
-  getflightStatusChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
+  getFlightStatusChartData(statistics: FlightStatistics): ChartData<'doughnut'> {
     if (!statistics) {
       return { labels: [], datasets: [] };
     }

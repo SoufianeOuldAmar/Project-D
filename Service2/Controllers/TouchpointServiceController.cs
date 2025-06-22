@@ -29,8 +29,9 @@ namespace TouchpointsService.Controllers.V1
             try
             {
 
-                if (year < 2000 || year > DateTime.Now.Year + 1)
-                    return BadRequest($"Invalid year. Choose between 2000 and {DateTime.Now.Year + 1}.");
+                const int MinYear = 2024;
+                if (year < MinYear)
+                    return BadRequest($"Invalid year. Data is only available from {MinYear} onward.");
 
                 string cacheKey = $"YearlyStats_{year}";
                 if (_cache.TryGetValue(cacheKey, out object cached))
@@ -113,6 +114,10 @@ namespace TouchpointsService.Controllers.V1
         {
             try
             {
+                const int MinYear = 2024;
+                if (year < MinYear)
+                    return BadRequest($"Invalid year. Data is only available from {MinYear} onward.");
+
                 if (month < 1 || month > 12)
                     return BadRequest("Invalid month. Choose between 1 and 12.");
 
@@ -198,6 +203,9 @@ namespace TouchpointsService.Controllers.V1
         {
             try
             {
+                if (timeWindowMinutes <= 0)
+                    return BadRequest("Time must be positive and larger than zero.");
+
                 string cacheKey = $"BusyHoursPerDay_{timeWindowMinutes}";
                 if (_cache.TryGetValue(cacheKey, out object cachedBusyHours))
                     return Ok(cachedBusyHours);
@@ -308,6 +316,11 @@ namespace TouchpointsService.Controllers.V1
         {
             try
             {
+                if (string.IsNullOrEmpty(id))
+                {
+                    return BadRequest("ID is required");
+                }
+
                 string cacheKey = $"Touchpoint_{id}";
                 if (_cache.TryGetValue(cacheKey, out FlightTouchpointInfo cachedRecord))
                     return Ok(cachedRecord);
@@ -420,6 +433,11 @@ namespace TouchpointsService.Controllers.V1
         {
             try
             {
+                if (top < 1 || top > 15)
+                {
+                    return BadRequest("Top must be at least 1 and not larger than 15");
+                }
+
                 string cacheKey = $"TopCountries_{top}";
                 if (_cache.TryGetValue(cacheKey, out object cachedStats))
                     return Ok(cachedStats);

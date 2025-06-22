@@ -1,7 +1,7 @@
 <div style="text-align: center; margin-bottom: 20px;">
     <label>
         <input type="checkbox" [(ngModel)]="showGraphs" />
-        Toon grafieken in plaats van HTML
+        Toon grafieken in plaats van tekst
     </label>
 </div>
 
@@ -123,8 +123,8 @@
     <br>
 
     <div style="width: 300px; height: 300px; margin: auto;">
-        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYear).datasets"
-            [labels]="getflightStatusChartData(flightStatisticsByYear).labels"
+        <canvas baseChart [datasets]="getFlightStatusChartData(flightStatisticsByYear).datasets"
+            [labels]="getFlightStatusChartData(flightStatisticsByYear).labels"
             [options]="getBarChartOptions('Vlucht status statistieken in: 2024')" [type]="'doughnut'">
         </canvas>
     </div>
@@ -174,8 +174,6 @@
             [options]="getBarChartOptions('Bagageverdeling in: 2024')" [type]="'doughnut'">
         </canvas>
     </div>
-
-
 </div>
 
 <div *ngIf=" flightStatisticsByYearMonth && !showGraphs">
@@ -239,8 +237,8 @@
     <br>
 
     <div style="width: 300px; height: 300px; margin: auto;">
-        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYearMonth).datasets"
-            [labels]="getflightStatusChartData(flightStatisticsByYearMonth).labels"
+        <canvas baseChart [datasets]="getFlightStatusChartData(flightStatisticsByYearMonth).datasets"
+            [labels]="getFlightStatusChartData(flightStatisticsByYearMonth).labels"
             [options]="getBarChartOptions('Vlucht status statistieken in: ' + (flightStatisticsByYearMonth?.startDate | date:'yyyy-MM'))"
             [type]="'doughnut'">
         </canvas>
@@ -360,8 +358,8 @@
     <br>
 
     <div style="width: 300px; height: 300px; margin: auto;">
-        <canvas baseChart [datasets]="getflightStatusChartData(flightStatisticsByYearMonthDay).datasets"
-            [labels]="getflightStatusChartData(flightStatisticsByYearMonthDay).labels"
+        <canvas baseChart [datasets]="getFlightStatusChartData(flightStatisticsByYearMonthDay).datasets"
+            [labels]="getFlightStatusChartData(flightStatisticsByYearMonthDay).labels"
             [options]="getBarChartOptions('Vlucht status statistieken in: ' + (flightStatisticsByYearMonthDay?.startDate | date:'yyyy-MM-dd'))"
             [type]="'doughnut'">
         </canvas>
@@ -497,7 +495,7 @@
         touchPointStatisticsByMonth.totalPassengers | number }}</h4>
     <h4 style="width: 300px; height: 50px; margin: auto;">Drukste dag: {{
         touchPointStatisticsByMonth.busiestDay }}</h4>
-    
+
     <div *ngIf="touchPointStatisticsByMonth" style="width: 500px; margin: auto;">
         <canvas baseChart [data]="getTouchPointTopAircraftChartData(touchPointStatisticsByMonth)"
             [options]="getBarChartOptions('Top vliegtuigtypes in: ' + touchPointStatisticsByMonth.month + ' ' + touchPointStatisticsByMonth.year)"
