@@ -1,0 +1,151 @@
+<div style="text-align: center; margin-bottom: 20px;">
+    <label>
+        <input type="checkbox" [(ngModel)]="showGraphs" />
+        Toon grafieken in plaats van tekst
+    </label>
+</div>
+
+<!-- Buttons to load each data set -->
+<div style="text-align: center; margin-bottom: 20px;">
+    <button (click)="getTrafficType()">Laad Verkeerstype Statistieken</button>
+    <button (click)="getFlightsPerAirport()">Laad Vluchten per Luchthaven</button>
+    <button (click)="getTopCountries()">Laad Top Landen</button>
+    <button (click)="getBusyHours()">Laad Drukke Uren</button>
+</div>
+
+<!-- Traffic Type Statistics -->
+<div *ngIf="trafficTypeStats && !showGraphs">
+    <button (click)="trafficTypeStats = null">Leeg Verkeerstype Statistieken</button>
+
+    <h3>Meest Voorkomende Verkeerstype</h3>
+    <p>
+        Type: {{ trafficTypeStats.mostCommonType.trafficType }}<br>
+        Aantal: {{ trafficTypeStats.mostCommonType.count }}<br>
+        Percentage: {{ trafficTypeStats.mostCommonType.percentage | number:'1.2-2' }}%
+    </p>
+
+    <h3>Alle Verkeerstypen</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Verkeerstype</th>
+                <th>Aantal</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let type of trafficTypeStats.allTypes">
+                <td>{{ type.trafficType }}</td>
+                <td>{{ type.count }}</td>
+                <td>{{ type.percentage | number:'1.2-2' }}%</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Flights Per Airport -->
+<div *ngIf="flightsPerAirport?.length && !showGraphs">
+    <button (click)="flightsPerAirport = []">Leeg Vluchten per Luchthaven</button>
+
+    <h3>Vluchten per Luchthaven</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Luchthaven</th>
+                <th>Aantal Vluchten</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let airport of flightsPerAirport">
+                <td>{{ airport.airport }}</td>
+                <td>{{ airport.flightCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Top Countries -->
+<div *ngIf="topCountries?.length && !showGraphs">
+    <button (click)="topCountries = []">Leeg Top Landen</button>
+
+    <h3>Top Landen</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Land</th>
+                <th>Aantal Vluchten</th>
+                <th>Meest Populaire Luchthaven</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let country of topCountries">
+                <td>{{ country.country }}</td>
+                <td>{{ country.flightCount }}</td>
+                <td>{{ country.mostPopularAirport }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Busy Hours -->
+<div *ngIf="busyHours?.length && !showGraphs">
+    <button (click)="busyHours = []">Leeg Drukke Uren</button>
+
+    <h3>Drukke Uren Per Dag</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Dag</th>
+                <th>Drukste Periode</th>
+                <th>Aantal Touchpoints</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let busy of busyHours">
+                <td>{{ busy.day }}</td>
+                <td>{{ busy.busiestPeriod }}</td>
+                <td>{{ busy.touchpointCount }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="trafficTypeStats && showGraphs">
+    <button (click)="clearTrafficTypeStats()">Verberg Grafieken</button>
+
+    <h3>Meest Voorkomende Verkeerstype</h3>
+    <canvas *ngIf="trafficTypeChartData" baseChart [datasets]="trafficTypeChartData.datasets"
+        [labels]="trafficTypeChartData.labels" [options]="getBarChartOptions('Meest Voorkomende Verkeerstype')"
+        [legend]="true" [type]="'doughnut'">
+    </canvas>
+</div>
+
+<div *ngIf="flightsPerAirport?.length && showGraphs">
+    <button (click)="clearFlightsPerAirport()">Verberg Grafieken</button>
+
+    <h3>Vluchten per Luchthaven</h3>
+    <canvas *ngIf="flightsPerAirportChartData" baseChart [datasets]="flightsPerAirportChartData.datasets"
+        [labels]="flightsPerAirportChartData.labels" [options]="getBarChartOptions('Vluchten per Luchthaven')"
+        [legend]="true" [type]="'bar'">
+    </canvas>
+</div>
+
+<div *ngIf="topCountries?.length && showGraphs">
+    <button (click)="clearTopCountries()">Verberg Grafieken</button>
+
+    <h3>Top Landen</h3>
+    <canvas *ngIf="topCountriesChartData" baseChart [datasets]="topCountriesChartData.datasets"
+        [labels]="topCountriesChartData.labels" [options]="getBarChartOptions('Top Landen')" [legend]="true"
+        [type]="'bar'">
+    </canvas>
+</div>
+
+<div *ngIf="busyHours?.length && showGraphs">
+    <button (click)="clearBusyHours()">Verberg Grafieken</button>
+
+    <h3>Drukke Uren Per Dag</h3>
+    <canvas *ngIf="busyHoursChartData" baseChart [datasets]="busyHoursChartData.datasets"
+        [labels]="busyHoursChartData.labels" [options]="getBarChartOptions('Drukke Uren Per Dag')" [legend]="true"
+        [type]="'line'">
+    </canvas>
+</div>

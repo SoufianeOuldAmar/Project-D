@@ -4,6 +4,7 @@ import { DashboardComponent } from '../app/dashboard/dashboard.component'; // Ad
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard'; // import guard
 import { AgendaComponent } from './agenda/agenda.component';
+import { AdvancedStatisticsComponent } from './advanced-statistics/advanced-statistics.component'; // Adjust path if needed
 
 
 export const routes: Routes = [
@@ -11,7 +12,8 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-    { path: 'statistics', component: AgendaComponent, canActivate: [AuthGuard] }
+    { path: 'statistics', component: AgendaComponent, canActivate: [AuthGuard] },
+    { path: 'advanced-statistics', component: AdvancedStatisticsComponent, canActivate: [AuthGuard] }, // Adjust component as needed
 ];
 
 export const appConfig = {

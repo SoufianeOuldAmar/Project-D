@@ -25,7 +25,7 @@ namespace Gateway.Controllers
             var user = await authService.RegisterAsync(request);
             if (user is null)
             {
-                return BadRequest("Username already exists");
+                return BadRequest("The username is already taken, or the password does not meet the security requirements. Passwords must be 8-32 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
             }
 
             return Ok(user);
