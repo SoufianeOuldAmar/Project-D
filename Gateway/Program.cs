@@ -66,6 +66,17 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddHttpClient("FlightExports", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["FlightExports:BaseUrl"]!);
+});
+
+builder.Services.AddHttpClient("FlightTouchpoints", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["FlightTouchpoints:BaseUrl"]!);
+});
+  
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

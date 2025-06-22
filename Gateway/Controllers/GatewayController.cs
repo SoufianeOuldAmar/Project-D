@@ -11,11 +11,10 @@ namespace ApiGateway.Controllers.V1
     public class FlightsController : ControllerBase
     {
         private readonly HttpClient _httpClient;
-        public readonly string BaseUrl = "http://localhost:5041/api/v1/flight-exports";
 
-        public FlightsController()
+        public FlightsController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClientFactory.CreateClient("FlightExports");
         }
 
         [HttpGet]
@@ -23,8 +22,7 @@ namespace ApiGateway.Controllers.V1
         {
             try
             {
-                var url = $"{BaseUrl}/all-flights-with-ids";
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync("all-flights-with-ids");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -48,8 +46,7 @@ namespace ApiGateway.Controllers.V1
                 if (string.IsNullOrWhiteSpace(airline))
                     return BadRequest(new { message = "Airline parameter is required" });
 
-                var url = $"{BaseUrl}/by-airline-full-name/{airline}";
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync($"by-airline-full-name/{airline}");
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     return NotFound(await response.Content.ReadAsStringAsync());
@@ -71,8 +68,7 @@ namespace ApiGateway.Controllers.V1
                 if (string.IsNullOrWhiteSpace(airportName))
                     return BadRequest(new { message = "Airport code parameter is required" });
 
-                var url = $"{BaseUrl}/by-airport/{airportName}";
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync($"by-airport/{airportName}");
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     return NotFound(await response.Content.ReadAsStringAsync());
@@ -91,9 +87,8 @@ namespace ApiGateway.Controllers.V1
         {
             try
             {
-                var url = $"{BaseUrl}/flight-statistics?startDatetime={startDatetime}&endDatetime={endDatetime}";
 
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync($"flight-statistics?startDatetime={startDatetime}&endDatetime={endDatetime}");
                 response.EnsureSuccessStatusCode();
 
                 return Ok(await response.Content.ReadAsStringAsync());
@@ -107,7 +102,7 @@ namespace ApiGateway.Controllers.V1
         [HttpGet("statistics/2024")]
         public async Task<IActionResult> Get2024Statistics()
         {
-            var response = await _httpClient.GetAsync($"{BaseUrl}/flight-statistics?startDatetime=2024-01-01&endDatetime=2024-12-31");
+            var response = await _httpClient.GetAsync("flight-statistics?startDatetime=2024-01-01&endDatetime=2024-12-31");
             return await CreateResponse(response);
         }
 
@@ -124,10 +119,7 @@ namespace ApiGateway.Controllers.V1
             {
                 var startDate = new DateTime(2024, monthNumber, 1);
                 var endDate = startDate.AddMonths(1).AddDays(-1);
-
-                var url = $"{BaseUrl}/flight-statistics?startDatetime={startDate:yyyy-MM-dd}&endDatetime={endDate:yyyy-MM-dd}";
-
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync($"flight-statistics?startDatetime={startDate:yyyy-MM-dd}&endDatetime={endDate:yyyy-MM-dd}");
                 return await CreateResponse(response);
             }
             catch (Exception ex)
@@ -159,74 +151,65 @@ namespace ApiGateway.Controllers.V1
     public class TouchpointsController : ControllerBase
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://localhost:5153/api/v1/flight-touchpoints";
 
-        public TouchpointsController(IHttpClientFactory httpClientFactory)
+        public TouchpointsController(IHttpClientFactory httpFactory)
         {
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpFactory.CreateClient("FlightTouchpoints");
         }
 
         [HttpGet("statistics/yearly")]
         public async Task<IActionResult> GetYearlyStats(int year = 2024)
         {
-            var url = $"{BaseUrl}/yearly-stats?year={year}";
-            return await ForwardRequest(url);
+            return await ForwardRequest($"yearly-stats?year={year}");
         }
 
         [HttpGet("statistics/monthly")]
         public async Task<IActionResult> GetMonthlyStats(int year = 2024, int month = 1)
         {
-            var url = $"{BaseUrl}/monthly-stats?year={year}&month={month}";
-            return await ForwardRequest(url);
+            return await ForwardRequest($"monthly-stats?year={year}&month={month}");
         }
 
         [HttpGet("statistics/busy-hours")]
         public async Task<IActionResult> GetBusyHours(int timeWindowMinutes = 60)
         {
-            var url = $"{BaseUrl}/busy-hours-per-day?timeWindowMinutes={timeWindowMinutes}";
-            return await ForwardRequest(url);
+            return await ForwardRequest($"busy-hours-per-day?timeWindowMinutes={timeWindowMinutes}");
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllTouchpoints()
         {
-            var url = $"{BaseUrl}/all-touchpoints-with-ids";
-            return await ForwardRequest(url);
+            return await ForwardRequest("all-touchpoints-with-ids");
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTouchpointById(string id)
         {
-            var url = $"{BaseUrl}/by-touchpoint-id/{id}";
-            return await ForwardRequest(url);
+            return await ForwardRequest($"by-touchpoint-id/{id}");
         }
 
         [HttpGet("statistics/traffic-type")]
         public async Task<IActionResult> GetMostCommonTrafficType()
         {
-            var url = $"{BaseUrl}/most-common-traffic-type";
-            return await ForwardRequest(url);
+            return await ForwardRequest("most-common-traffic-type");
         }
 
         [HttpGet("statistics/flights-per-airport")]
         public async Task<IActionResult> GetFlightsPerAirport()
         {
-            var url = $"{BaseUrl}/flights-per-airport";
-            return await ForwardRequest(url);
+            return await ForwardRequest("flights-per-airport");
         }
 
         [HttpGet("statistics/top-countries")]
         public async Task<IActionResult> GetCountriesWithMostFlights(int top = 10)
         {
-            var url = $"{BaseUrl}/countries-with-most-flights?top={top}";
-            return await ForwardRequest(url);
+            return await ForwardRequest($"countries-with-most-flights?top={top}");
         }
 
-        private async Task<IActionResult> ForwardRequest(string url)
+        private async Task<IActionResult> ForwardRequest(string relativePath)
         {
             try
             {
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync(relativePath);
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 return Content(content, "application/json");

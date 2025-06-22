@@ -4,11 +4,11 @@ using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 
-public class TouchpointsControllerTests : IClassFixture<WebApplicationFactory<Gateway.Program>>
+public class TouchpointsControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
 
-    public TouchpointsControllerTests(WebApplicationFactory<Gateway.Program> factory)
+    public TouchpointsControllerTests(CustomWebApplicationFactory<Program> factory)
     {
         _client = factory.CreateClient();
         var token = JwtTokenHelper.GenerateToken();

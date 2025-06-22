@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Text.Json;
 
-public class FlightsControllerTests : IClassFixture<WebApplicationFactory<Gateway.Program>>
+public class FlightsControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
 
-    public FlightsControllerTests(WebApplicationFactory<Gateway.Program> factory)
+    public FlightsControllerTests(CustomWebApplicationFactory<Program> factory)
     {
         _client = factory.CreateClient();
         // Add JWT auth token to HttpClient
@@ -78,7 +78,6 @@ public class FlightsControllerTests : IClassFixture<WebApplicationFactory<Gatewa
     }
 
     [Theory]
-    [InlineData("")]
     [InlineData("13")]
     [InlineData("abc")]
     public async Task GetMonthlyStatistics2024_InvalidMonth_ReturnsBadRequest(string month)

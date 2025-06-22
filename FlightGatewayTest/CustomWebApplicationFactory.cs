@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FlightGatewayTest;
 using Gateway.Data;
 using Gateway.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -57,13 +58,13 @@ public class CustomWebApplicationFactory<TProgram>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer           = true,
-                    ValidIssuer             = TestIssuer,
-                    ValidateAudience         = true,
-                    ValidAudience           = TestAudience,
-                    ValidateLifetime         = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = TestIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = TestAudience,
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TestSecret))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TestSecret))
                 };
             });
 
@@ -78,22 +79,30 @@ public class CustomWebApplicationFactory<TProgram>
 
             var regular = new User
             {
-                Id           = Guid.NewGuid(),
-                Username     = "existinguser",
-                Role         = "User"
+                Id = Guid.NewGuid(),
+                Username = "existinguser",
+                Role = "User"
             };
             regular.PasswordHash = hasher.HashPassword(regular, "Password123!");
 
             var admin = new User
             {
-                Id           = Guid.NewGuid(),
-                Username     = "adminuser",
-                Role         = "Admin"
+                Id = Guid.NewGuid(),
+                Username = "adminuser",
+                Role = "Admin"
             };
             admin.PasswordHash = hasher.HashPassword(admin, "AdminPassword123!");
 
             db.Users.AddRange(regular, admin);
             db.SaveChanges();
+
+            // Replace the real HTTP handler for FlightExports
+            services.AddHttpClient("FlightExports")
+                    .ConfigurePrimaryHttpMessageHandler(() => new FakeHandler());
+
+            // And for Touchpoints
+            services.AddHttpClient("FlightTouchpoints")
+                    .ConfigurePrimaryHttpMessageHandler(() => new FakeHandler());
         });
     }
 }
