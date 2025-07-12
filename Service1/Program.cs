@@ -5,6 +5,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<DynamicDataService>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<FlightExportDbContext>(options =>
